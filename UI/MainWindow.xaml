@@ -1,12 +1,477 @@
-﻿<Window x:Class="UI.MainWindow"
+﻿<Window x:Class="RatingInspector2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:UI"
+        xmlns:local="clr-namespace:RatingInspector2"
+        xmlns:nc="clr-namespace:Nelfias.Controls;assembly=Nelfias.Controls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        DataContext="{Binding Source={StaticResource Locator}, Path= Main}"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        Title="Rating Inspector 2 by Nelfias" Height="558" Width="658">
     <Grid>
-        
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="2">
+                <materialDesign:PackIcon Kind="LanguageR" DockPanel.Dock="Left" Height="32" Width="32"
+                                         Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                <Button Height="32" Width="32" DockPanel.Dock="Right" Padding="0">
+                    <materialDesign:PackIcon Kind="PowerStandby" Width="32" Height="32" />
+                </Button>
+                <Label
+                    Content="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    HorizontalAlignment="Center" />
+            </DockPanel>
+            <WrapPanel DockPanel.Dock="Bottom" Margin="2">
+                <Button ToolTip="Главный экран" Width="48" Height="48" Margin="2" Padding="0" Click="CloseAllOverlays">
+                    <materialDesign:PackIcon Kind="HomeOutline" Width="44" Height="44" />
+                </Button>
+                <Button ToolTip="Импорт" Height="48" Width="48" Margin="2" Padding="0" Click="ShowImportOverlay">
+                    <materialDesign:PackIcon Kind="ChevronDoubleDown" Width="48" Height="48" />
+                </Button>
+                <Button ToolTip="Обновить базы" Height="48" Width="48" Margin="2" Padding="0" Click="ShowUpdateOverlay">
+                    <materialDesign:PackIcon Kind="CloudDownloadOutline" Width="44" Height="44" />
+                </Button>
+                <Button Height="48" Width="48" ToolTip="Экспорт" Margin="2" Padding="0" Click="ShowExportOverlay">
+                    <materialDesign:PackIcon Kind="ChevronDoubleUp" Width="48" Height="48" />
+                </Button>
+                <Button Height="48" Width="48" ToolTip="Просмотр" Margin="2" Padding="0" Click="ShowSearchOverlay">
+                    <materialDesign:PackIcon Kind="UserSearchOutline" Width="44" Height="44" />
+                </Button>
+                <Button Height="48" Width="48" ToolTip="Группы" Margin="2" Padding="0">
+                    <materialDesign:PackIcon Kind="UserGroupOutline" Width="42" Height="42" />
+                </Button>
+                <Button Height="48" Width="48" ToolTip="Настройки" Margin="2" Padding="0" Click="ShowSettingsOverlay">
+                    <materialDesign:PackIcon Kind="SettingsOutline" Width="44" Height="44" />
+                </Button>
+            </WrapPanel>
+            <Grid Margin="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <nc:Overlay Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.ColumnSpan="3"
+                            Grid.RowSpan="5"
+                            Panel.ZIndex="200"
+                            x:Name="SearchOverlay"
+                            Visibility="Collapsed">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.ColumnSpan="2"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                HorizontalAlignment="Center">
+                                Поиск и редактирование
+                            </TextBlock>
+                            <ListView
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Height="350"
+                                Width="500" />
+                            <WrapPanel Grid.Column="0" Grid.Row="1" Margin="2">
+                                <Label Content="Поиск" VerticalContentAlignment="Bottom" />
+                                <TextBox Margin="2,0"
+                                         Width="300"
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                         materialDesign:HintAssist.Hint="Id или Фамилия"
+                                         VerticalContentAlignment="Bottom" />
+                                <Button
+                                    Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                    ToolTip="MaterialDesignFloatingActionMiniAccentButton"
+                                    Width="24" Height="24" Padding="0" Margin="2,0">
+                                    <materialDesign:PackIcon
+                                        Kind="BackspaceOutline"
+                                        Height="18"
+                                        Width="18" />
+                                </Button>
+                                <Button Margin="2,0" Padding="10,0">
+                                    <materialDesign:PackIcon Kind="UserSearchOutline" Height="32" Width="32" />
+                                </Button>
+
+                            </WrapPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="1">
+                                <Button Margin="2" Padding="10,0">
+                                    <materialDesign:PackIcon Kind="UserCardDetails" Height="32" Width="32" />
+                                </Button>
+                                <Button Margin="2" Padding="10,0">
+                                    <materialDesign:PackIcon Kind="CallMerge" Height="32" Width="32" />
+                                </Button>
+                                <Button Margin="2" Padding="10,0">
+                                    <materialDesign:PackIcon Kind="Web" Height="32" Width="32" />
+                                </Button>
+                                <Separator Margin="2,8" />
+                                <Button
+                                    Margin="2"
+                                    Padding="10,0"
+                                    Style="{StaticResource MaterialDesignRaisedAccentButton}">
+                                    <materialDesign:PackIcon Kind="DeleteForeverOutline" Width="32" Height="32" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </materialDesign:Card>
+                </nc:Overlay>
+                <nc:Overlay
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="3"
+                    Grid.RowSpan="5"
+                    Panel.ZIndex="200"
+                    x:Name="UpdateOverlay"
+                    Visibility="Visible">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                       HorizontalAlignment="Center">
+                                Обновление
+                            </TextBlock>
+                            <TextBlock Grid.Row="1" HorizontalAlignment="Center" Margin="0,16">
+                                Запустить процесс обновления базы данных?
+                            </TextBlock>
+                            <ProgressBar
+                                Margin="16"
+                                Width="300px"
+                                Height="1px"
+                                Grid.Row="2"
+                                IsIndeterminate="False"
+                                Visibility="Collapsed" />
+                            <Button Content="Обновить" Grid.Row="2" Width="100" />
+                        </Grid>
+                    </materialDesign:Card>
+                </nc:Overlay>
+                <nc:Overlay Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.ColumnSpan="3"
+                            Grid.RowSpan="5"
+                            Panel.ZIndex="200"
+                            x:Name="ExportOverlay"
+                            Visibility="Collapsed">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                HorizontalAlignment="Center"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="2">
+                                Экспорт
+                            </TextBlock>
+                            <GroupBox Margin="2"
+                                      Grid.Column="0" Grid.Row="1"
+                                      Header="Опции экспорта" Width="250">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <ToggleButton
+                                            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                            IsChecked="True" />
+                                        <Label>РШФ Id</Label>
+                                        <Label Content="   " />
+                                        <ToggleButton
+                                            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                            IsChecked="True" />
+                                        <Label>FIDE Id</Label>
+                                    </WrapPanel>
+                                    <Label>Имя</Label>
+                                    <ComboBox SelectedIndex="0">
+                                        <ComboBoxItem Content="RUS" />
+                                        <ComboBoxItem Content="ENG" />
+                                        <ComboBoxItem Content="BOTH" />
+                                    </ComboBox>
+                                    <WrapPanel>
+                                        <ToggleButton
+                                            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                            IsChecked="True" />
+                                        <Label>Год рождения</Label>
+                                    </WrapPanel>
+                                    <Label>Рейтинги</Label>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">РШФ</Label>
+                                        <Label Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center">FIDE</Label>
+                                        <Label Grid.Column="0" Grid.Row="1">Классика</Label>
+                                        <Label Grid.Column="0" Grid.Row="2">Быстрые</Label>
+                                        <Label Grid.Column="0" Grid.Row="3">Блиц</Label>
+                                        <ToggleButton Grid.Column="1" Grid.Row="1"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                        <ToggleButton Grid.Column="1" Grid.Row="2"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                        <ToggleButton Grid.Column="1" Grid.Row="3"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                        <ToggleButton Grid.Column="2" Grid.Row="1"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                        <ToggleButton Grid.Column="2" Grid.Row="2"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                        <ToggleButton Grid.Column="2" Grid.Row="3"
+                                                      Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                                      IsChecked="True" />
+                                    </Grid>
+                                    <WrapPanel>
+                                        <ToggleButton
+                                            Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                                            IsChecked="False" />
+                                        <Label>Отображать группы</Label>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Margin="2"
+                                      Grid.Column="1" Grid.Row="1"
+                                      Header="Группы для экспорта" Width="250">
+                                <ItemsControl
+                                    ItemsSource="{Binding Items2}"
+                                    Grid.IsSharedSizeScope="True">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                x:Name="Border"
+                                                Padding="8"
+                                                BorderThickness="0 0 0 1"
+                                                BorderBrush="{DynamicResource MaterialDesignDivider}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition
+                                                            SharedSizeGroup="Checkerz" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <ToggleButton
+                                                        VerticalAlignment="Center"
+                                                        IsChecked="{Binding IsSelected}"
+                                                        Style="{StaticResource MaterialDesignActionLightToggleButton}" />
+                                                    <StackPanel
+                                                        Margin="8 0 0 0"
+                                                        Grid.Column="1">
+                                                        <TextBlock
+                                                            FontWeight="Bold"
+                                                            Text="{Binding Name}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger
+                                                    Binding="{Binding IsSelected}"
+                                                    Value="True">
+                                                    <Setter
+                                                        TargetName="Border"
+                                                        Property="Background"
+                                                        Value="{DynamicResource MaterialDesignSelection}" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <Button Grid.Column="1" Grid.Row="2" Margin="2">Экспорт</Button>
+                        </Grid>
+                    </materialDesign:Card>
+                </nc:Overlay>
+                <nc:Overlay
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="3"
+                    Grid.RowSpan="5"
+                    Panel.ZIndex="200"
+                    x:Name="SettingsOverlay"
+                    Visibility="Collapsed">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                HorizontalAlignment="Center"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="2">
+                                Настройки
+                            </TextBlock>
+                            <Label Content="URL базы ФИДЕ:" Grid.Column="0" Grid.Row="1" />
+                            <TextBox Width="300" Grid.Column="1" Grid.Row="1" Margin="1" />
+                            <Label Content="Фильтр страны:" Grid.Column="0" Grid.Row="2" />
+                            <TextBox Width="300" Grid.Column="1" Grid.Row="2" Margin="1" />
+                            <Label Content="URL базы РШФ:" Grid.Column="0" Grid.Row="3" />
+                            <TextBox Width="300" Grid.Column="1" Grid.Row="3" Margin="1" />
+
+                        </Grid>
+                    </materialDesign:Card>
+                </nc:Overlay>
+                <nc:Overlay
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="3"
+                    Grid.RowSpan="5"
+                    Panel.ZIndex="200"
+                    x:Name="ImportOverlay"
+                    Visibility="Collapsed">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                HorizontalAlignment="Center"
+                                Grid.Column="0"
+                                Grid.Row="0">
+                                Импорт
+                            </TextBlock>
+                            <StackPanel Grid.Row="1"
+                                        Orientation="Horizontal"
+                                        Margin="2" HorizontalAlignment="Center">
+                                <RadioButton
+                                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="2"
+                                    IsChecked="True"
+                                    Content="РШФ Id"
+                                    GroupName="ImportIdType" />
+                                <RadioButton
+                                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="2"
+                                    IsChecked="False"
+                                    Content="FIDE Id"
+                                    GroupName="ImportIdType" />
+                            </StackPanel>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Column="0" Grid.Row="0" Content="Группа:" Margin="4"
+                                       VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1" Grid.Row="0" Width="120" Margin="4" />
+                                <Button Grid.Column="2" Grid.Row="0" Margin="4">
+                                    <materialDesign:PackIcon Kind="Edit" Width="24" Height="24" />
+                                </Button>
+                                <Label Grid.Column="0" Grid.Row="1" Content="Id:" Margin="4" VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Grid.Row="1" Width="120" Margin="4" />
+                                <Button Grid.Column="2" Grid.Row="1" Margin="4">
+                                    <materialDesign:PackIcon Kind="Add" Width="24" Height="24" />
+                                </Button>
+                                <Label Grid.Column="0" Grid.Row="2" Content="Из Файла:" VerticalAlignment="Center"
+                                       Margin="4" />
+
+                                <Button Grid.Column="2" Grid.Row="2" Margin="4">
+                                    <materialDesign:PackIcon Kind="FileFindOutline" Width="24" Height="24" />
+                                </Button>
+                            </Grid>
+                            <ListView Grid.Row="3" Height="150" />
+                            <WrapPanel Grid.Row="4" HorizontalAlignment="Center">
+                                <Button Margin="4">
+                                    <materialDesign:PackIcon Kind="Eraser" Width="24" Height="24" />
+                                </Button>
+                                <Button Margin="64,4,4,4">
+                                    <materialDesign:PackIcon Kind="CheckboxMarkedCircleOutline" Width="24" Height="24" />
+                                </Button>
+                            </WrapPanel>
+
+                        </Grid>
+                    </materialDesign:Card>
+                </nc:Overlay>
+                <Label Grid.Column="0" Grid.Row="0" Content="Последнее обновление:" />
+                <Label Grid.Column="0" Grid.Row="1" Content="Профилей отслеживается:" />
+                <Label Grid.Column="0" Grid.Row="2" Content="Версия DB:" />
+                <Label Grid.Column="0" Grid.Row="3" Content="Версия UI:" />
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding LastUpdate}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Count}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Version}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding UiVersion}" VerticalAlignment="Center" />
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>

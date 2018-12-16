@@ -15,6 +15,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
+using Interfaces;
+using Services;
+using DAL;
 
 namespace UI.ViewModel
 {
@@ -31,31 +34,18 @@ namespace UI.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
-
+            SimpleIoc.Default.Register<Ri2Context>();
+            SimpleIoc.Default.Register<IInfo, InfoService>();
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<UpdateViewModel>();
         }
 
-        public MainViewModel Main
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
-            }
-        }
-        
+        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+
+        public UpdateViewModel UpdateVM => ServiceLocator.Current.GetInstance<UpdateViewModel>();
+
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
         }
     }
 }
