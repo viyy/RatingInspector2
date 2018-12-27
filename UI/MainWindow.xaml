@@ -1,11 +1,12 @@
-﻿<Window x:Class="RatingInspector2.MainWindow"
+﻿<Window x:Class="UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RatingInspector2"
+        xmlns:local="clr-namespace:UI"
         xmlns:nc="clr-namespace:Nelfias.Controls;assembly=Nelfias.Controls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:UI.Converters"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -14,8 +15,8 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         DataContext="{Binding Source={StaticResource Locator}, Path= Main}"
         WindowStyle="None"
-        ResizeMode="CanResizeWithGrip"
-        Title="Rating Inspector 2 by Nelfias" Height="558" Width="658">
+        ResizeMode="NoResize"
+        Title="Rating Inspector 2 by Nelfias" Height="558" Width="658" Loaded="Window_Loaded">
     <Grid>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" Margin="2">
@@ -32,22 +33,26 @@
                 <Button ToolTip="Главный экран" Width="48" Height="48" Margin="2" Padding="0" Click="CloseAllOverlays">
                     <materialDesign:PackIcon Kind="HomeOutline" Width="44" Height="44" />
                 </Button>
-                <Button ToolTip="Импорт" Height="48" Width="48" Margin="2" Padding="0" Click="ShowImportOverlay">
+                <Button ToolTip="Импорт" Height="48" Width="48" Margin="2" Padding="0" Click="ShowOverlay" Tag="import">
                     <materialDesign:PackIcon Kind="ChevronDoubleDown" Width="48" Height="48" />
                 </Button>
-                <Button ToolTip="Обновить базы" Height="48" Width="48" Margin="2" Padding="0" Click="ShowUpdateOverlay">
+                <Button ToolTip="Обновить базы" Height="48" Width="48" Margin="2" Padding="0" Click="ShowOverlay"
+                        Tag="update">
                     <materialDesign:PackIcon Kind="CloudDownloadOutline" Width="44" Height="44" />
                 </Button>
-                <Button Height="48" Width="48" ToolTip="Экспорт" Margin="2" Padding="0" Click="ShowExportOverlay">
+                <Button Height="48" Width="48" ToolTip="Экспорт" Margin="2" Padding="0" Click="ShowOverlay"
+                        Tag="export">
                     <materialDesign:PackIcon Kind="ChevronDoubleUp" Width="48" Height="48" />
                 </Button>
-                <Button Height="48" Width="48" ToolTip="Просмотр" Margin="2" Padding="0" Click="ShowSearchOverlay">
+                <Button Height="48" Width="48" ToolTip="Просмотр" Margin="2" Padding="0" Click="ShowOverlay"
+                        Tag="search">
                     <materialDesign:PackIcon Kind="UserSearchOutline" Width="44" Height="44" />
                 </Button>
                 <Button Height="48" Width="48" ToolTip="Группы" Margin="2" Padding="0">
                     <materialDesign:PackIcon Kind="UserGroupOutline" Width="42" Height="42" />
                 </Button>
-                <Button Height="48" Width="48" ToolTip="Настройки" Margin="2" Padding="0" Click="ShowSettingsOverlay">
+                <Button Height="48" Width="48" ToolTip="Настройки" Margin="2" Padding="0" Click="ShowOverlay"
+                        Tag="settings">
                     <materialDesign:PackIcon Kind="SettingsOutline" Width="44" Height="44" />
                 </Button>
             </WrapPanel>
@@ -62,12 +67,14 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <nc:Overlay Grid.Column="0"
                             Grid.Row="0"
                             Grid.ColumnSpan="3"
-                            Grid.RowSpan="5"
+                            Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="SearchOverlay"
                             Visibility="Collapsed">
@@ -146,18 +153,23 @@
                     Grid.Column="0"
                     Grid.Row="0"
                     Grid.ColumnSpan="3"
-                    Grid.RowSpan="5"
+                    Grid.RowSpan="7"
                     Panel.ZIndex="200"
                     x:Name="UpdateOverlay"
-                    Visibility="Visible">
+                    Visibility="Collapsed">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>
                     <materialDesign:Card
                         materialDesign:ShadowAssist.ShadowDepth="Depth3"
                         Padding="16,4,16,16">
-                        <Grid>
+                        <Grid DataContext="{Binding Source={StaticResource Locator}, Path=UpdateVM}">
+                            <Grid.Resources>
+                                <converters:False2Visible x:Key="ButtonVisibility" />
+                                <converters:False2Collapsed x:Key="ProgressVisibility" />
+                            </Grid.Resources>
                             <Grid.RowDefinitions>
+                                <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
@@ -173,17 +185,20 @@
                                 Margin="16"
                                 Width="300px"
                                 Height="1px"
-                                Grid.Row="2"
-                                IsIndeterminate="False"
-                                Visibility="Collapsed" />
-                            <Button Content="Обновить" Grid.Row="2" Width="100" />
+                                Grid.Row="3"
+                                IsIndeterminate="True"
+                                Visibility="{Binding Busy, Converter={StaticResource ProgressVisibility}}" />
+                            <TextBlock HorizontalAlignment="Center" Text="{Binding Report}" Grid.Row="2"
+                                       Visibility="{Binding Busy, Converter={StaticResource ProgressVisibility}}" />
+                            <Button Content="Обновить" Grid.Row="2" Width="100" Command="{Binding RunUpdateCommand}"
+                                    Visibility="{Binding Busy, Converter={StaticResource ButtonVisibility}}" />
                         </Grid>
                     </materialDesign:Card>
                 </nc:Overlay>
                 <nc:Overlay Grid.Column="0"
                             Grid.Row="0"
                             Grid.ColumnSpan="3"
-                            Grid.RowSpan="5"
+                            Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="ExportOverlay"
                             Visibility="Collapsed">
@@ -337,10 +352,10 @@
                     Grid.Column="0"
                     Grid.Row="0"
                     Grid.ColumnSpan="3"
-                    Grid.RowSpan="5"
+                    Grid.RowSpan="7"
                     Panel.ZIndex="200"
                     x:Name="SettingsOverlay"
-                    Visibility="Collapsed">
+                    Visibility="Visible">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>
@@ -353,6 +368,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -372,6 +388,10 @@
                             <TextBox Width="300" Grid.Column="1" Grid.Row="2" Margin="1" />
                             <Label Content="URL базы РШФ:" Grid.Column="0" Grid.Row="3" />
                             <TextBox Width="300" Grid.Column="1" Grid.Row="3" Margin="1" />
+                            <WrapPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2">
+                                <Label Content="Удалять временные файлы при выходе" />
+                                <ToggleButton IsChecked="True" />
+                            </WrapPanel>
 
                         </Grid>
                     </materialDesign:Card>
@@ -380,7 +400,7 @@
                     Grid.Column="0"
                     Grid.Row="0"
                     Grid.ColumnSpan="3"
-                    Grid.RowSpan="5"
+                    Grid.RowSpan="7"
                     Panel.ZIndex="200"
                     x:Name="ImportOverlay"
                     Visibility="Collapsed">
@@ -464,13 +484,17 @@
                     </materialDesign:Card>
                 </nc:Overlay>
                 <Label Grid.Column="0" Grid.Row="0" Content="Последнее обновление:" />
-                <Label Grid.Column="0" Grid.Row="1" Content="Профилей отслеживается:" />
-                <Label Grid.Column="0" Grid.Row="2" Content="Версия DB:" />
-                <Label Grid.Column="0" Grid.Row="3" Content="Версия UI:" />
+                <Label Grid.Column="0" Grid.Row="1" Content="Профилей РШФ в базе:" />
+                <Label Grid.Column="0" Grid.Row="2" Content="Профилей FIDE в базе:" />
+                <Label Grid.Column="0" Grid.Row="3" Content="Профилей отслеживается:" />
+                <Label Grid.Column="0" Grid.Row="4" Content="Версия DB:" />
+                <Label Grid.Column="0" Grid.Row="5" Content="Версия UI:" />
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding LastUpdate}" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Count}" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Version}" VerticalAlignment="Center" />
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding UiVersion}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding RcfCount}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding FideCount}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding ProfilesCount}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Version}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding UiVersion}" VerticalAlignment="Center" />
             </Grid>
         </DockPanel>
     </Grid>

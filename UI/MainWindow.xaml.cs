@@ -1,63 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Nelfias.Controls;
+using UI.Utils;
 
-namespace RatingInspector2
+namespace UI
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    ///     Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-        public MainWindow()
-        {
-        }
+        private readonly Dictionary<string, Overlay> _overlays = new Dictionary<string, Overlay>();
 
         private void CloseAllOverlays(object sender, RoutedEventArgs e)
         {
-            ExportOverlay.Visibility = Visibility.Collapsed;
-            SettingsOverlay.Visibility = Visibility.Collapsed;
-            ImportOverlay.Visibility = Visibility.Collapsed;
-            UpdateOverlay.Visibility = Visibility.Collapsed;
-            SearchOverlay.Visibility = Visibility.Collapsed;
+            if (StateMachine.CurrentState != ProcessStates.Idle) return;
+            foreach (var overlay in _overlays) overlay.Value.Visibility = Visibility.Collapsed;
         }
 
-        private void ShowExportOverlay(object sender, RoutedEventArgs e)
+        private void ShowOverlay(object sender, RoutedEventArgs e)
         {
+            if (StateMachine.CurrentState != ProcessStates.Idle) return;
+            var tag = ((Button) sender).Tag.ToString();
+            if (!_overlays.ContainsKey(tag)) return;
             CloseAllOverlays(sender, e);
-            ExportOverlay.Visibility = Visibility.Visible;
+            _overlays[tag].Visibility = Visibility.Visible;
         }
-        private void ShowImportOverlay(object sender, RoutedEventArgs e)
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            CloseAllOverlays(sender, e);
-            ImportOverlay.Visibility = Visibility.Visible;
-        }
-        private void ShowSettingsOverlay(object sender, RoutedEventArgs e)
-        {
-            CloseAllOverlays(sender, e);
-            SettingsOverlay.Visibility = Visibility.Visible;
-        }
-        private void ShowUpdateOverlay(object sender, RoutedEventArgs e)
-        {
-            CloseAllOverlays(sender, e);
-            UpdateOverlay.Visibility = Visibility.Visible;
-        }
-        private void ShowSearchOverlay(object sender, RoutedEventArgs e)
-        {
-            CloseAllOverlays(sender, e);
-            SearchOverlay.Visibility = Visibility.Visible;
+            _overlays.Add("export", ExportOverlay);
+            _overlays.Add("settings", SettingsOverlay);
+            _overlays.Add("import", ImportOverlay);
+            _overlays.Add("update", UpdateOverlay);
+            _overlays.Add("search", SearchOverlay);
+            //_overlays.Add("groups", GroupOverlay);
         }
     }
 }

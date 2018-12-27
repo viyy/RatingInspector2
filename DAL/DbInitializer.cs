@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
+using Common;
 using Models;
-using Models.NotDb;
 
 namespace DAL
 {

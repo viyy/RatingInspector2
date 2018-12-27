@@ -1,4 +1,4 @@
-﻿namespace Models.NotDb
+﻿namespace Common
 {
     public static class InfoKeys
     {

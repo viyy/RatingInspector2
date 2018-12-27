@@ -34,8 +34,9 @@ namespace UI.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            SimpleIoc.Default.Register<Ri2Context>();
             SimpleIoc.Default.Register<IInfo, InfoService>();
+            SimpleIoc.Default.Register<IUpdateService, UpdateService>();
+
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<UpdateViewModel>();
         }

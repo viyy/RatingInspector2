@@ -6,6 +6,8 @@ namespace Interfaces
     {
         DateTime LastUpdate { get; }
         int ProfilesCount { get; }
+        int RcfCount { get; }
+        int FideCount { get; }
         string Version { get; }
     }
 }
