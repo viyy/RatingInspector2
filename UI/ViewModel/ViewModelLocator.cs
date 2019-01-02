@@ -36,14 +36,21 @@ namespace UI.ViewModel
 
             SimpleIoc.Default.Register<IInfo, InfoService>();
             SimpleIoc.Default.Register<IUpdateService, UpdateService>();
+            SimpleIoc.Default.Register<IImportService, ImportService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<UpdateViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<ImportViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         public UpdateViewModel UpdateVM => ServiceLocator.Current.GetInstance<UpdateViewModel>();
+
+        public SettingsViewModel SettingsVM => ServiceLocator.Current.GetInstance<SettingsViewModel>();
+
+        public ImportViewModel ImportVM => ServiceLocator.Current.GetInstance<ImportViewModel>();
 
         public static void Cleanup()
         {

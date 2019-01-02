@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PluginManager.cs" />
+    <Compile Include="ProfileType.cs" />
     <Compile Include="Ri2Constants.cs" />
     <Compile Include="InfoKeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

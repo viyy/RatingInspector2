@@ -20,6 +20,11 @@ namespace Common
         public int BirthCutoff { get; set; }
         public bool RemoveTmpFiles { get; set; }
 
+        public void Reload()
+        {
+            _current = Load();
+        }
+
         private static Settings Load()
         {
             if (!File.Exists("Settings.xml")) Init();

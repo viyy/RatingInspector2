@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{37294027-F49E-41F5-B8E3-55F661315F27}</ProjectGuid>
+    <ProjectGuid>{F6126684-F528-48D4-9AF7-18F7F69580ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Interfaces</RootNamespace>
-    <AssemblyName>Interfaces</AssemblyName>
+    <RootNamespace>TxtImporter</RootNamespace>
+    <AssemblyName>TxtImporter</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,19 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IImportService.cs" />
-    <Compile Include="IInfo.cs" />
-    <Compile Include="IUpdateService.cs" />
+    <Compile Include="TxtImportPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{08905387-A92A-4427-924D-95A36BFB03C8}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Models\Models.csproj">
-      <Project>{66936832-b706-49fa-b12b-7447f6e8148a}</Project>
-      <Name>Models</Name>
+    <ProjectReference Include="..\PluginShared\PluginShared.csproj">
+      <Project>{8708A786-390A-4AAE-AD51-D89224A6DAE5}</Project>
+      <Name>PluginShared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

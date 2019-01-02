@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace UI.Properties {
+namespace Services.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace UI.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("UI.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Services.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,24 +57,6 @@ namespace UI.Properties {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на 1.0.
-        /// </summary>
-        internal static string UiVersion {
-            get {
-                return ResourceManager.GetString("UiVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на {0} | UpdateViewModel | {1}.
-        /// </summary>
-        internal static string UpdateViewModel_UpdateAsync_Error {
-            get {
-                return ResourceManager.GetString("UpdateViewModel_UpdateAsync_Error", resourceCulture);
             }
         }
     }

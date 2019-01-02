@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Common;
 using GalaSoft.MvvmLight;
 using Interfaces;
+using UI.Properties;
 using UI.Utils;
 
 namespace UI.ViewModel
@@ -12,8 +13,9 @@ namespace UI.ViewModel
     /// <summary>
     ///     The update view model.
     /// </summary>
-    public class UpdateViewModel : ViewModelBase, INotifyPropertyChanged
+    public class UpdateViewModel : ViewModelBase
     {
+
         private readonly IUpdateService _upd;
 
         private bool _busy;
@@ -51,8 +53,7 @@ namespace UI.ViewModel
             }
             catch (Exception e)
             {
-                //TODO: Logger
-                File.AppendAllText("err.log", "[" + e.Source + "] " + e.Message + " // " + e.HelpLink);
+                File.AppendAllText("log.txt", string.Format(Resources.UpdateViewModel_UpdateAsync_Error, DateTime.Now.ToLongDateString(), e.Message));
             }
             finally
             {
