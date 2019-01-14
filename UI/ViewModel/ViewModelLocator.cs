@@ -37,6 +37,7 @@ namespace UI.ViewModel
             SimpleIoc.Default.Register<IInfo, InfoService>();
             SimpleIoc.Default.Register<IUpdateService, UpdateService>();
             SimpleIoc.Default.Register<IImportService, ImportService>();
+            SimpleIoc.Default.Register<IExportService, ExportService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<UpdateViewModel>();
@@ -53,7 +54,7 @@ namespace UI.ViewModel
 
         public ImportViewModel ImportVM => ServiceLocator.Current.GetInstance<ImportViewModel>();
 
-        public ExportViewModel ExportVM => ServiceLocator.Current.GetInstance<ExportViewModel>()
+        public ExportViewModel ExportVM => ServiceLocator.Current.GetInstance<ExportViewModel>();
 
         public static void Cleanup()
         {

@@ -57,6 +57,10 @@
       <Project>{66936832-b706-49fa-b12b-7447f6e8148a}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PluginShared\PluginShared.csproj">
+      <Project>{8708A786-390A-4AAE-AD51-D89224A6DAE5}</Project>
+      <Name>PluginShared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
