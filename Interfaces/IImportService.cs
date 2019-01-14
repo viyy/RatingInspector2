@@ -5,10 +5,10 @@ using Models;
 
 namespace Interfaces
 {
-    public interface IImportService
+    public interface IImportService : IGroupListProvider
     {
-        IEnumerable<Group> GetGroups();
         string GetFilters();
+        IEnumerable<int> LoadFromFile(string path);
         Task ImportAsync(IEnumerable<int> ids, Group group, ProfileType profileType);
     }
 }

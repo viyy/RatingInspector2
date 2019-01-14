@@ -10,6 +10,7 @@
         public static class Notifications
         {
             public const string DbUpdated = "db_upd";
+            public const string Exit = "app_exit";
         }
 
         public static class FideXmlElements

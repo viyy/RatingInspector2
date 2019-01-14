@@ -34,14 +34,6 @@ namespace UI.ViewModel
             set => Set(ref _currentId, value);
         }
 
-        private string _path;
-
-        public string Path
-        {
-            get => _path;
-            set => Set(ref _path, value);
-        }
-
         private ObservableCollection<int> _ids = new ObservableCollection<int>();
 
         public ObservableCollection<int> Ids
@@ -54,22 +46,28 @@ namespace UI.ViewModel
         public IAsyncCommand ImportCommand { get; }
         public ICommand AddIdCommand { get; }
         public ICommand SelectFileCommand { get; }
-
+        public ICommand DeleteIdCommand { get; }
 
         public ImportViewModel(IImportService import)
         {
             _import = import;
             ClearCommand = new RelayCommand(()=>Ids.Clear(), ()=>Ids.Count>0);
-            ImportCommand = new AsyncCommand(() => _import.ImportAsync(Ids.ToList(),SelectedGroup,Rcf?ProfileType.Rcf:ProfileType.Fide));
+            ImportCommand = new AsyncCommand(async () =>
+            {
+                await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide).ConfigureAwait(false);
+                MessengerInstance.Send(Ri2Constants.Notifications.DbUpdated);
+            });
             AddIdCommand = new RelayCommand(()=>
             {
-                Ids.Add(CurrentId);
+                if (CurrentId!=0)
+                    Ids.Add(CurrentId);
                 CurrentId = 0;
-            }, ()=>CurrentId!=0);
-            SelectFileCommand = new RelayCommand(()=>SelectFile());
+            });
+            SelectFileCommand = new RelayCommand(SelectFile);
+            DeleteIdCommand = new RelayCommand<int>(i=>Ids.Remove(i), Ids.Count>0);
         }
 
-        private string SelectFile()
+        private void SelectFile()
         {
             var dlg = new OpenFileDialog
             {
@@ -77,8 +75,13 @@ namespace UI.ViewModel
                 Multiselect = false,
                 CheckFileExists = true
             };
-            return dlg.ShowDialog() == true ? dlg.FileName : "";
-
+            var path = dlg.ShowDialog() == true ? dlg.FileName : "";
+            if (path == "") return;
+            
+            foreach (var i in _import.LoadFromFile(path))
+            {
+                Ids.Add(i);
+            }
         }
         public bool Rcf
         {

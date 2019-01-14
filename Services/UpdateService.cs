@@ -44,7 +44,7 @@ namespace Services
                 await client.DownloadFileTaskAsync(new Uri(Settings.Current.RcfUrl), RcfFilePath)
                     .ConfigureAwait(false);
                 progress?.Report(DlRcfXslComplete);
-            }
+            } 
 
             progress?.Report(FideUnzip);
             ZipFile.ExtractToDirectory(FideZipPath, TmpPath);
@@ -104,9 +104,10 @@ namespace Services
         {
             using (var ri2 = new Ri2Context())
             {
-                foreach (var profile in ri2.Profiles)
+                foreach (var profile in ri2.Profiles.Include("RcfProfile").Include("FideProfile"))
                 {
                     if (profile.FideProfileId.HasValue && profile.RcfProfileId.HasValue) continue;
+
                     if (profile.RcfProfileId.HasValue)
                     {
                         if (profile.RcfProfile.FideProfileId.HasValue)
@@ -114,9 +115,9 @@ namespace Services
                         continue;
                     }
 
-                    if (!profile.FideProfileId.HasValue) continue;
+                    //if (!profile.FideProfileId.HasValue) continue;
                     var id = profile.FideProfileId;
-                    var rcf = ri2.RcfProfiles.SingleOrDefault(x => x.FideProfileId == id);
+                    var rcf = ri2.RcfProfiles.FirstOrDefault(x => x.FideProfileId == id);
                     if (rcf == null) continue;
                     profile.RcfProfile = rcf;
                 }
@@ -161,17 +162,16 @@ namespace Services
                     {
                         if (fideId.HasValue)
                         {
-                            var tf = ri2.FideProfiles.AsQueryable().FirstOrDefault(x => x.FideId == fideId.Value);
+                            var tf = ri2.FideProfiles.FirstOrDefault(x => x.FideId == fideId.Value);
                             if (tf != null)
                             {
                                 pr.FideProfileId = tf.Id;
                                 pr.FideProfile = tf;
                             }
                         }
-
-                        if (ri2.RcfProfiles.AsQueryable().Any(cp => cp.RcfId == pr.RcfId))
+                        var t = ri2.RcfProfiles.FirstOrDefault(cp => cp.RcfId == pr.RcfId);
+                        if (t!=null)
                         {
-                            var t = ri2.RcfProfiles.Single(cp => cp.RcfId == pr.RcfId);
                             pr.Id = t.Id;
                             mod.Add(pr);
                         }
@@ -231,9 +231,9 @@ namespace Services
                 //File.AppendAllText("log.txt",pr.FideId+Environment.NewLine);
                 using (var ri2 = new Ri2Context())
                 {
-                    if (ri2.FideProfiles.AsQueryable().Any(cp => cp.FideId == pr.FideId))
-                    {
-                        var t = ri2.FideProfiles.Single(cp => cp.FideId == pr.FideId);
+                    var t = ri2.FideProfiles.FirstOrDefault(cp => cp.FideId == pr.FideId);
+                    if (t!=null)
+                    { 
                         pr.Id = t.Id;
                         mod.Add(pr);
                     }

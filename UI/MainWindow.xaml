@@ -23,7 +23,7 @@
             <DockPanel DockPanel.Dock="Top" Margin="2">
                 <materialDesign:PackIcon Kind="LanguageR" DockPanel.Dock="Left" Height="32" Width="32"
                                          Foreground="{DynamicResource PrimaryHueMidBrush}" />
-                <Button Height="32" Width="32" DockPanel.Dock="Right" Padding="0">
+                <Button Height="32" Width="32" DockPanel.Dock="Right" Padding="0" Command="{Binding CloseCommand}">
                     <materialDesign:PackIcon Kind="PowerStandby" Width="32" Height="32" />
                 </Button>
                 <Label
@@ -207,13 +207,13 @@
                             Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="ExportOverlay"
-                            Visibility="Collapsed">
+                            Visibility="Visible">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>
                     <materialDesign:Card
                         materialDesign:ShadowAssist.ShadowDepth="Depth3"
-                        Padding="16,4,16,16">
+                        Padding="16,4,16,16" DataContext="{Binding Source={StaticResource Locator}, Path=ExportVM}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -433,11 +433,12 @@
                     Grid.RowSpan="7"
                     Panel.ZIndex="200"
                     x:Name="ImportOverlay"
-                    Visibility="Visible">
+                    Visibility="Collapsed">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>
                     <materialDesign:Card
+                        x:Name="ImportCard"
                         materialDesign:ShadowAssist.ShadowDepth="Depth3"
                         Padding="16,4,16,16"
                         DataContext="{Binding Source={StaticResource Locator}, Path=ImportVM}">
@@ -493,7 +494,7 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <Button Grid.Column="2" Grid.Row="0" Margin="4">
+                                <Button Grid.Column="2" Grid.Row="0" Margin="4" Click="ShowOverlay" Tag="groups">
                                     <materialDesign:PackIcon Kind="Edit" Width="24" Height="24" />
                                 </Button>
                                 <Label Grid.Column="0" Grid.Row="1" Content="Id:" Margin="4" VerticalAlignment="Center" />
@@ -503,13 +504,26 @@
                                 </Button>
                                 <Label Grid.Column="0" Grid.Row="2" Content="Из Файла:" VerticalAlignment="Center"
                                        Margin="4" />
-                                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Path}" IsReadOnly="True"></TextBox>
 
                                 <Button Grid.Column="2" Grid.Row="2" Margin="4" Command="{Binding SelectFileCommand}">
                                     <materialDesign:PackIcon Kind="FileFindOutline" Width="24" Height="24" />
                                 </Button>
                             </Grid>
-                            <ListView Grid.Row="3" Height="150" />
+                            <ListView Grid.Row="3" Height="150" ItemsSource="{Binding Ids}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel>
+                                            <Button 
+                                                Padding="2"
+                                                Command="{Binding ElementName=ImportCard, Path=DataContext.DeleteIdCommand}"
+                                                CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="TrashCircle" Width="24" Height="24"/>
+                                            </Button>
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                             <WrapPanel Grid.Row="4" HorizontalAlignment="Center">
                                 <Button Margin="4" Command="{Binding ClearCommand}">
                                     <materialDesign:PackIcon Kind="Eraser" Width="24" Height="24" />
