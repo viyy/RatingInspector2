@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Nelfias.Controls;
 using UI.Utils;
 
@@ -36,6 +37,11 @@ namespace UI
             _overlays.Add("update", UpdateOverlay);
             _overlays.Add("search", SearchOverlay);
             //_overlays.Add("groups", GroupOverlay);
+        }
+        private void EventTrap(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
     }
 }

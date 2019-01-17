@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Export", "Export", "{DE0595
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxtExporter", "TxtExporter\TxtExporter.csproj", "{A99B7D42-6153-494A-AB88-D1E133ED2831}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XslxExporter", "XslxExporter\XslxExporter.csproj", "{B69F49AF-5D62-4835-944A-9259C2025F19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{A99B7D42-6153-494A-AB88-D1E133ED2831}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A99B7D42-6153-494A-AB88-D1E133ED2831}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A99B7D42-6153-494A-AB88-D1E133ED2831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B69F49AF-5D62-4835-944A-9259C2025F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69F49AF-5D62-4835-944A-9259C2025F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69F49AF-5D62-4835-944A-9259C2025F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69F49AF-5D62-4835-944A-9259C2025F19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{AA3FD1DA-7DFC-493A-8E1E-ED494389372C} = {364BD415-5271-418B-B837-875F0A3F829E}
 		{DE059564-F702-44F9-A8A4-0BE466162C0B} = {364BD415-5271-418B-B837-875F0A3F829E}
 		{A99B7D42-6153-494A-AB88-D1E133ED2831} = {DE059564-F702-44F9-A8A4-0BE466162C0B}
+		{B69F49AF-5D62-4835-944A-9259C2025F19} = {DE059564-F702-44F9-A8A4-0BE466162C0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E8E5E39-5443-4F33-AD1C-2DE37EED3490}

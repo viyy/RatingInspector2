@@ -21,15 +21,22 @@
         Title="Rating Inspector 2 by Nelfias" Height="558" Width="658" Loaded="Window_Loaded">
     <Grid>
         <DockPanel>
-            <DockPanel DockPanel.Dock="Top" Margin="2">
+            <DockPanel DockPanel.Dock="Top" Margin="2" MouseDown="EventTrap">
                 <materialDesign:PackIcon Kind="LanguageR" DockPanel.Dock="Left" Height="32" Width="32"
                                          Foreground="{DynamicResource PrimaryHueMidBrush}" />
                 <Button Height="32" Width="32" DockPanel.Dock="Right" Padding="0" Command="{Binding CloseCommand}">
                     <materialDesign:PackIcon Kind="PowerStandby" Width="32" Height="32" />
                 </Button>
-                <Label
-                    Content="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                    HorizontalAlignment="Center" />
+                <Border
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    MouseDown="EventTrap">
+                    <Label
+                        MouseDown="EventTrap"
+                        Content="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                        HorizontalAlignment="Center" />
+                </Border>
+               
             </DockPanel>
             <WrapPanel DockPanel.Dock="Bottom" Margin="2">
                 <Button ToolTip="Главный экран" Width="48" Height="48" Margin="2" Padding="0" Click="CloseAllOverlays">
@@ -208,7 +215,7 @@
                             Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="ExportOverlay"
-                            Visibility="Visible">
+                            Visibility="Collapsed">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>

@@ -35,7 +35,9 @@ namespace Services
             {
                 foreach (var g in groups)
                 {
-                    var gr = db.Groups.Include(x=>x.Profiles).Include(x=>x.Profiles.Select(p=>p.FideProfile)).Include(x=>x.Profiles.Select(p=>p.RcfProfile).Select(r=>r.FideProfile)).Single(x => x.Id == g.Id);
+                    var gr = db.Groups.Include(x => x.Profiles).Include(x => x.Profiles.Select(p => p.FideProfile))
+                        .Include(x => x.Profiles.Select(p => p.RcfProfile).Select(r => r.FideProfile))
+                        .Single(x => x.Id == g.Id);
                     t.AddRange(gr.Profiles);
                 }
             }
