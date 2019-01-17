@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{08905387-A92A-4427-924D-95A36BFB03C8}</ProjectGuid>
+    <ProjectGuid>{A99B7D42-6153-494A-AB88-D1E133ED2831}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RootNamespace>TxtExporter</RootNamespace>
+    <AssemblyName>TxtExporter</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,12 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PluginManager.cs" />
-    <Compile Include="ProfileType.cs" />
-    <Compile Include="Ri2Constants.cs" />
-    <Compile Include="InfoKeys.cs" />
+    <Compile Include="TxtExporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{66936832-B706-49FA-B12B-7447F6E8148A}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginShared\PluginShared.csproj">
+      <Project>{8708A786-390A-4AAE-AD51-D89224A6DAE5}</Project>
+      <Name>PluginShared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

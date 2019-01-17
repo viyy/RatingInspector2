@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportSettings.cs" />
     <Compile Include="IFileExporter.cs" />
     <Compile Include="IFileImporter.cs" />
     <Compile Include="IPlugin.cs" />

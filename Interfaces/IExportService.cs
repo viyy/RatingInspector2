@@ -9,6 +9,7 @@ namespace Interfaces
 {
     public interface IExportService : IGroupListProvider
     {
+        Task ExportAsync(IEnumerable<Group> groups, ExportSettings settings, Guid pluginGuid);
         Task ExportAsync(IEnumerable<Profile> profiles, ExportSettings settings, Guid pluginGuid);
         IEnumerable<IFileExporter> GetPlugins();
     }

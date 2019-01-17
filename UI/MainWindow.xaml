@@ -223,7 +223,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock
                                 Style="{StaticResource MaterialDesignTitleTextBlock}"
@@ -362,7 +362,44 @@
                                     </ListView.ItemTemplate>
                                 </ListView>
                             </GroupBox>
-                            <Button Grid.Column="1" Grid.Row="2" Margin="2">Экспорт</Button>
+                            <materialDesign:PopupBox
+                                Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                PlacementMode="TopAndAlignRightEdges"
+                                ToolTipService.Placement="Right"
+                                Grid.Column="1"
+                                Grid.Row="2"
+                                HorizontalAlignment="Right"
+                                Margin="0,2,2,0">
+                                <materialDesign:PopupBox.ToggleContent>
+                                    <materialDesign:PackIcon Kind="ChevronDoubleRight"  Width="32" Height="32"/>
+                                </materialDesign:PopupBox.ToggleContent>
+                                <materialDesign:PopupBox.ToggleCheckedContent>
+                                    <materialDesign:PackIcon Kind="DotsVerticalCircleOutline" Width="32" Height="32" />
+                                </materialDesign:PopupBox.ToggleCheckedContent>
+                                <ItemsControl 
+                                    HorizontalAlignment="Right"
+                                    HorizontalContentAlignment="Right"
+                                    Padding="0"
+                                    ItemsSource="{Binding Plugins}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel IsItemsHost="True" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                CommandParameter="{Binding GUID}"
+                                                Command="{Binding Source={StaticResource Locator}, Path=ExportVM.ExportCommand}"
+                                                Content="{Binding Shortcut}"
+                                                Margin="2"
+                                                />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                               
+                            </materialDesign:PopupBox>
                         </Grid>
                     </materialDesign:Card>
                 </nc:Overlay>

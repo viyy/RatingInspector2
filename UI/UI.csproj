@@ -196,6 +196,10 @@
       <Project>{66936832-B706-49FA-B12B-7447F6E8148A}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PluginShared\PluginShared.csproj">
+      <Project>{8708A786-390A-4AAE-AD51-D89224A6DAE5}</Project>
+      <Name>PluginShared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{9FF22C7D-1E71-49A3-89A7-BD8536C9507C}</Project>
       <Name>Services</Name>
