@@ -11,6 +11,7 @@ using EntityFramework.Utilities;
 using Interfaces;
 using Models;
 using OfficeOpenXml;
+using Services.Helpers;
 using static Common.Ri2Constants;
 
 namespace Services
@@ -44,7 +45,7 @@ namespace Services
                 await client.DownloadFileTaskAsync(new Uri(Settings.Current.RcfUrl), RcfFilePath)
                     .ConfigureAwait(false);
                 progress?.Report(DlRcfXslComplete);
-            } 
+            }
 
             progress?.Report(FideUnzip);
             ZipFile.ExtractToDirectory(FideZipPath, TmpPath);
@@ -169,8 +170,9 @@ namespace Services
                                 pr.FideProfile = tf;
                             }
                         }
+
                         var t = ri2.RcfProfiles.FirstOrDefault(cp => cp.RcfId == pr.RcfId);
-                        if (t!=null)
+                        if (t != null)
                         {
                             pr.Id = t.Id;
                             mod.Add(pr);
@@ -232,8 +234,8 @@ namespace Services
                 using (var ri2 = new Ri2Context())
                 {
                     var t = ri2.FideProfiles.FirstOrDefault(cp => cp.FideId == pr.FideId);
-                    if (t!=null)
-                    { 
+                    if (t != null)
+                    {
                         pr.Id = t.Id;
                         mod.Add(pr);
                     }

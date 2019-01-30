@@ -9,6 +9,6 @@
         public bool Birth { get; set; } = true;
         public bool Groups { get; set; } = false;
         public bool[] RcfRat { get; set; } = {true, true, true};
-        public bool[] FideRat { get; set; } = { true, true, true };
+        public bool[] FideRat { get; set; } = {true, true, true};
     }
 }

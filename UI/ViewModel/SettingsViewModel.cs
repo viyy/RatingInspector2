@@ -4,8 +4,6 @@ using System.Windows.Input;
 using Common;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using MaterialDesignThemes.Wpf;
-using UI.Utils;
 
 namespace UI.ViewModel
 {
@@ -13,7 +11,7 @@ namespace UI.ViewModel
     {
         public SettingsViewModel()
         {
-            SaveCommand = new RelayCommand(()=>Settings.Current.Save());
+            SaveCommand = new RelayCommand(() => Settings.Current.Save());
             CancelCommand = new RelayCommand(() =>
             {
                 Settings.Current.Reload();
@@ -27,6 +25,7 @@ namespace UI.ViewModel
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
+
         public string FideUrl
         {
             get => Settings.Current.FideUrl;
@@ -73,11 +72,11 @@ namespace UI.ViewModel
 
         public string Filter
         {
-            get => string.Join(" ",Settings.Current.Filter);
+            get => string.Join(" ", Settings.Current.Filter);
             set
             {
-                if (string.Join(" ", Settings.Current.Filter)==value) return;
-                Settings.Current.Filter = value.Split(new []{' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (string.Join(" ", Settings.Current.Filter) == value) return;
+                Settings.Current.Filter = value.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
                 RaisePropertyChanged(nameof(Filter));
             }
         }

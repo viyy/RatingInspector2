@@ -13,13 +13,37 @@ namespace UI.ViewModel
 {
     public class ImportViewModel : ViewModelBase
     {
-        private bool _rcf = true;
-        private bool _fide = false;
         private readonly IImportService _import;
 
-        public ObservableCollection<Group> Groups => new ObservableCollection<Group>(_import.GetGroups());
+        private int _currentId;
+        private bool _fide;
+
+        private ObservableCollection<int> _ids = new ObservableCollection<int>();
+        private bool _rcf = true;
 
         private Group _selectedGroup;
+
+        public ImportViewModel(IImportService import)
+        {
+            _import = import;
+            ClearCommand = new RelayCommand(() => Ids.Clear(), () => Ids.Count > 0);
+            ImportCommand = new AsyncCommand(async () =>
+            {
+                await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide)
+                    .ConfigureAwait(false);
+                MessengerInstance.Send(Ri2Constants.Notifications.DbUpdated);
+            });
+            AddIdCommand = new RelayCommand(() =>
+            {
+                if (CurrentId != 0)
+                    Ids.Add(CurrentId);
+                CurrentId = 0;
+            });
+            SelectFileCommand = new RelayCommand(SelectFile);
+            DeleteIdCommand = new RelayCommand<int>(i => Ids.Remove(i), Ids.Count > 0);
+        }
+
+        public ObservableCollection<Group> Groups => new ObservableCollection<Group>(_import.GetGroups());
 
         public Group SelectedGroup
         {
@@ -27,14 +51,11 @@ namespace UI.ViewModel
             set => Set(ref _selectedGroup, value);
         }
 
-        private int _currentId;
         public int CurrentId
         {
             get => _currentId;
             set => Set(ref _currentId, value);
         }
-
-        private ObservableCollection<int> _ids = new ObservableCollection<int>();
 
         public ObservableCollection<int> Ids
         {
@@ -48,23 +69,16 @@ namespace UI.ViewModel
         public ICommand SelectFileCommand { get; }
         public ICommand DeleteIdCommand { get; }
 
-        public ImportViewModel(IImportService import)
+        public bool Rcf
         {
-            _import = import;
-            ClearCommand = new RelayCommand(()=>Ids.Clear(), ()=>Ids.Count>0);
-            ImportCommand = new AsyncCommand(async () =>
-            {
-                await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide).ConfigureAwait(false);
-                MessengerInstance.Send(Ri2Constants.Notifications.DbUpdated);
-            });
-            AddIdCommand = new RelayCommand(()=>
-            {
-                if (CurrentId!=0)
-                    Ids.Add(CurrentId);
-                CurrentId = 0;
-            });
-            SelectFileCommand = new RelayCommand(SelectFile);
-            DeleteIdCommand = new RelayCommand<int>(i=>Ids.Remove(i), Ids.Count>0);
+            get => _rcf;
+            set => Set(ref _rcf, value);
+        }
+
+        public bool Fide
+        {
+            get => _fide;
+            set => Set(ref _fide, value);
         }
 
         private void SelectFile()
@@ -77,22 +91,8 @@ namespace UI.ViewModel
             };
             var path = dlg.ShowDialog() == true ? dlg.FileName : "";
             if (path == "") return;
-            
-            foreach (var i in _import.LoadFromFile(path))
-            {
-                Ids.Add(i);
-            }
-        }
-        public bool Rcf
-        {
-            get => _rcf;
-            set => Set(ref _rcf, value);
-        }
 
-        public bool Fide
-        {
-            get => _fide;
-            set => Set(ref _fide, value);
+            foreach (var i in _import.LoadFromFile(path)) Ids.Add(i);
         }
     }
 }

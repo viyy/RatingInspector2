@@ -17,6 +17,7 @@ namespace TxtExporter
         public string Description => "Export to simple txt file";
         public string Shortcut => "TXT";
         public string Filter => "*.txt|*.txt";
+
         public async Task ExportAsync(IEnumerable<Profile> profiles, ExportSettings settings)
         {
             foreach (var profile in profiles)
@@ -31,19 +32,15 @@ namespace TxtExporter
                     if (profile.RcfProfile != null)
                         str += profile.RcfProfile.Name + "\t";
                     else
-                    {
                         str += profile.FideProfile?.Name + "\t";
-                    }
                 }
 
                 if (settings.EngName)
                 {
                     if (profile.FideProfile != null)
-                        str += profile.FideProfile.Name+"\t";
+                        str += profile.FideProfile.Name + "\t";
                     else
-                    {
                         str += "\t";
-                    }
                 }
 
                 if (settings.Birth)

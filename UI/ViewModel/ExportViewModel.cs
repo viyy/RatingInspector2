@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Common;
-using DAL;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Interfaces;
@@ -15,21 +14,24 @@ namespace UI.ViewModel
 {
     public class ExportViewModel : ViewModelBase
     {
-        public ICommand GroupSelectionChangedCommand { get; }
-        public ICommand ExportCommand { get; }
-
         private readonly IExportService _exporter;
         private readonly ExportSettings _settings = new ExportSettings();
+
+        private ObservableCollection<IFileExporter> _plugins;
+
+        private ObservableCollection<Group> _selectedGroups = new ObservableCollection<Group>();
 
         public ExportViewModel(IExportService exporter)
         {
             GroupSelectionChangedCommand = new RelayCommand<IEnumerable<object>>(SetListSelection);
-            ExportCommand = new RelayCommand<Guid>(guid => _exporter.ExportAsync(SelectedGroups.ToList(), _settings, guid));
+            ExportCommand =
+                new RelayCommand<Guid>(guid => _exporter.ExportAsync(SelectedGroups.ToList(), _settings, guid));
             _exporter = exporter;
             _plugins = new ObservableCollection<IFileExporter>(_exporter.GetPlugins());
         }
 
-        private ObservableCollection<IFileExporter> _plugins;
+        public ICommand GroupSelectionChangedCommand { get; }
+        public ICommand ExportCommand { get; }
 
         public ObservableCollection<IFileExporter> Plugins
         {
@@ -39,22 +41,10 @@ namespace UI.ViewModel
 
         public ObservableCollection<Group> Groups => new ObservableCollection<Group>(_exporter.GetGroups());
 
-        private ObservableCollection<Group> _selectedGroups = new ObservableCollection<Group>();
-
         public ObservableCollection<Group> SelectedGroups
         {
             get => _selectedGroups;
             set => Set(ref _selectedGroups, value);
-        }
-
-        private void SetListSelection(IEnumerable<object> groups)
-        {
-            SelectedGroups = new ObservableCollection<Group>();
-            foreach (var group in groups)
-            {
-                if (!(group is Group g)) return;
-                SelectedGroups.Add(g);
-            }
         }
 
         public bool Rcf
@@ -98,6 +88,16 @@ namespace UI.ViewModel
                 if (_settings.Groups == value) return;
                 _settings.Groups = value;
                 RaisePropertyChanged(nameof(Group));
+            }
+        }
+
+        private void SetListSelection(IEnumerable<object> groups)
+        {
+            SelectedGroups = new ObservableCollection<Group>();
+            foreach (var group in groups)
+            {
+                if (!(group is Group g)) return;
+                SelectedGroups.Add(g);
             }
         }
     }

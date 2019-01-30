@@ -15,6 +15,7 @@ namespace TxtImporter
         public string Description => "Import list of id from txt file";
         public string Filter => "*.txt|*.txt";
         public IEnumerable<string> SupportedFormats => new[] {"txt"};
+
         public bool TryRead(string path, out IEnumerable<int> list)
         {
             list = new List<int>();
@@ -31,6 +32,7 @@ namespace TxtImporter
                 File.AppendAllText("err.log", DateTime.Now.ToShortTimeString() + "|TxtImporter|" + e.Message + "\n");
                 return false;
             }
+
             return true;
         }
 

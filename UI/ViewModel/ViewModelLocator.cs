@@ -38,12 +38,16 @@ namespace UI.ViewModel
             SimpleIoc.Default.Register<IUpdateService, UpdateService>();
             SimpleIoc.Default.Register<IImportService, ImportService>();
             SimpleIoc.Default.Register<IExportService, ExportService>();
+            SimpleIoc.Default.Register<IGroupManager, GroupManagerService>();
+            SimpleIoc.Default.Register<IProfileManager, ProfileService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<UpdateViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
             SimpleIoc.Default.Register<ImportViewModel>();
             SimpleIoc.Default.Register<ExportViewModel>();
+            SimpleIoc.Default.Register<GroupManagerViewModel>();
+            SimpleIoc.Default.Register<SearchViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -55,6 +59,10 @@ namespace UI.ViewModel
         public ImportViewModel ImportVM => ServiceLocator.Current.GetInstance<ImportViewModel>();
 
         public ExportViewModel ExportVM => ServiceLocator.Current.GetInstance<ExportViewModel>();
+
+        public GroupManagerViewModel GroupVM => ServiceLocator.Current.GetInstance<GroupManagerViewModel>();
+
+        public SearchViewModel SearchVM => ServiceLocator.Current.GetInstance<SearchViewModel>();
 
         public static void Cleanup()
         {

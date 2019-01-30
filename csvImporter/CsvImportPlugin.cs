@@ -16,6 +16,7 @@ namespace CsvImporter
         public string Description => "Import list of id from csv file";
         public string Filter => "*.csv|*.csv";
         public IEnumerable<string> SupportedFormats => new[] {"csv"};
+
         public bool TryRead(string path, out IEnumerable<int> list)
         {
             list = new List<int>();
@@ -29,9 +30,10 @@ namespace CsvImporter
             }
             catch (Exception e)
             {
-                File.AppendAllText("err.log",DateTime.Now.ToShortTimeString()+"|CSVImporter|"+e.Message+"\n");
+                File.AppendAllText("err.log", DateTime.Now.ToShortTimeString() + "|CSVImporter|" + e.Message + "\n");
                 return false;
             }
+
             return true;
         }
 

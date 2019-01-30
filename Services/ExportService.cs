@@ -8,24 +8,17 @@ using DAL;
 using Interfaces;
 using Models;
 using PluginShared;
+using Services.Helpers;
 
 namespace Services
 {
-    public class ExportService : IExportService
+    public class ExportService : BaseGroupListProvider, IExportService
     {
         private readonly List<IFileExporter> _plugins;
 
         public ExportService()
         {
             _plugins = PluginManager.GetPlugins<IFileExporter>();
-        }
-
-        public IEnumerable<Group> GetGroups()
-        {
-            using (var db = new Ri2Context())
-            {
-                return db.Groups.ToList();
-            }
         }
 
         public Task ExportAsync(IEnumerable<Group> groups, ExportSettings settings, Guid pluginGuid)

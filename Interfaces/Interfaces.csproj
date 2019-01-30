@@ -43,8 +43,10 @@
   <ItemGroup>
     <Compile Include="IExportService.cs" />
     <Compile Include="IGroupListProvider.cs" />
+    <Compile Include="IGroupManager.cs" />
     <Compile Include="IImportService.cs" />
     <Compile Include="IInfo.cs" />
+    <Compile Include="IProfileManager.cs" />
     <Compile Include="IUpdateService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

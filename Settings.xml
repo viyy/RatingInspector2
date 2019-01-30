@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <FideUrl>http://ratings.fide.com/download/players_list_xml.zip</FideUrl>
+  <Filter>
+    <string>RUS</string>
+  </Filter>
+  <RcfUrl>https://goo.gl/g5wsY3</RcfUrl>
+  <BirthCutoff>1990</BirthCutoff>
+  <RemoveTmpFiles>true</RemoveTmpFiles>
+</settings>

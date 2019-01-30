@@ -36,8 +36,9 @@ namespace UI
             _overlays.Add("import", ImportOverlay);
             _overlays.Add("update", UpdateOverlay);
             _overlays.Add("search", SearchOverlay);
-            //_overlays.Add("groups", GroupOverlay);
+            _overlays.Add("groups", GroupOverlay);
         }
+
         private void EventTrap(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)

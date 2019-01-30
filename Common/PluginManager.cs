@@ -10,10 +10,11 @@ namespace Common
     {
         public static List<TInterface> GetPlugins<TInterface>()
         {
-            return (from file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\"), "*.dll")
-                                  from type in Assembly.LoadFrom(file).GetTypes()
-                                  where type.GetInterfaces().Contains(typeof(TInterface))
-                                  select (TInterface)Activator.CreateInstance(type)).ToList();
+            return (from file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\"),
+                    "*.dll")
+                from type in Assembly.LoadFrom(file).GetTypes()
+                where type.GetInterfaces().Contains(typeof(TInterface))
+                select (TInterface) Activator.CreateInstance(type)).ToList();
         }
     }
 }

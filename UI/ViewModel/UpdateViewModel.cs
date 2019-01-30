@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using Common;
@@ -15,7 +14,6 @@ namespace UI.ViewModel
     /// </summary>
     public class UpdateViewModel : ViewModelBase
     {
-
         private readonly IUpdateService _upd;
 
         private bool _busy;
@@ -53,7 +51,9 @@ namespace UI.ViewModel
             }
             catch (Exception e)
             {
-                File.AppendAllText("log.txt", string.Format(Resources.UpdateViewModel_UpdateAsync_Error, DateTime.Now.ToLongDateString(), e.Message));
+                File.AppendAllText("log.txt",
+                    string.Format(Resources.UpdateViewModel_UpdateAsync_Error, DateTime.Now.ToLongDateString(),
+                        e.Message));
             }
             finally
             {
