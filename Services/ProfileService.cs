@@ -16,18 +16,19 @@ namespace Services
             var res = new List<Profile>();
             using (var db = new Ri2Context())
             {
-                if (needle == null)
+                if (string.IsNullOrEmpty(needle))
                 {
-                    res.AddRange(db.Profiles.Include(x => x.RcfProfile).Include(x => x.FideProfile));
+                    res.AddRange(db.Profiles.Include(x => x.RcfProfile).Include(x => x.FideProfile).Include(x=>x.Group));
                 }
                 else
                 {
                     var tmp = db.Profiles
-                        .Where(x => x.RcfProfile.Name == needle || x.FideProfile.Name == needle ||
+                        .Where(x => x.RcfProfile.Name.StartsWith(needle) || x.FideProfile.Name.StartsWith(needle) ||
                                     x.RcfProfile.RcfId.ToString() == needle ||
                                     x.FideProfile.FideId.ToString() == needle)
                         .Include(x => x.RcfProfile)
-                        .Include(x => x.FideProfile);
+                        .Include(x => x.FideProfile)
+                        .Include(x => x.Group);
                     res.AddRange(tmp);
                 }
             }

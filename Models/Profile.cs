@@ -15,5 +15,7 @@ namespace Models
         public int GroupId { get; set; }
 
         [ForeignKey("GroupId")] public virtual Group Group { get; set; }
+
+        [NotMapped] public int Birth => RcfProfile?.Birth ?? FideProfile?.Birth ?? 0;
     }
 }

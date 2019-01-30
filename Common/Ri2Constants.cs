@@ -7,6 +7,12 @@
         public const string RcfFilePath = @"tmp\rcf.xlsx";
         public const string FideFilePath = @"tmp\players_list_xml_foa.xml";
 
+        public static class Urls
+        {
+            public const string RcfUrl = "http://ratings.ruchess.ru/people/";
+            public const string FideUrl = "https://ratings.fide.com/card.phtml?event=";
+        }
+
         public static class Notifications
         {
             public const string DbUpdated = "db_upd";
