@@ -11,5 +11,7 @@ namespace Interfaces
         Task MergeGroups(Group from, Group to);
         void DeleteGroup(Group gr);
         void CreateGroup(Group gr);
+
+        void DeleteGroupWithProfiles(int id);
     }
 }

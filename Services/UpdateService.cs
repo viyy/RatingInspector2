@@ -18,10 +18,10 @@ namespace Services
 {
     public class UpdateService : IUpdateService
     {
-        private const string DlFideZip = "Скачивается fide.zip...";
-        private const string DlFideZipComplete = "fide.zip скачан.";
-        private const string DlRcfXsl = "Скачивается rcf.xlsx...";
-        private const string DlRcfXslComplete = "rcf.xlsx скачан.";
+        private const string FideZip = "Скачивается fide.zip...";
+        private const string FideZipComplete = "fide.zip скачан.";
+        private const string RcfXsl = "Скачивается rcf.xlsx...";
+        private const string RcfXslComplete = "rcf.xlsx скачан.";
         private const string FideUnzip = "Распаковка...";
         private const string FideProcess = "Обработка файла Fide...";
         private const string CompleteMsg = "Готово";
@@ -37,14 +37,14 @@ namespace Services
             if (File.Exists(FideFilePath)) File.Delete(FideFilePath);
             using (var client = new WebClient())
             {
-                progress?.Report(DlFideZip);
+                progress?.Report(FideZip);
                 await client.DownloadFileTaskAsync(new Uri(Settings.Current.FideUrl), FideZipPath)
                     .ConfigureAwait(false);
-                progress?.Report(DlFideZipComplete);
-                progress?.Report(DlRcfXsl);
+                progress?.Report(FideZipComplete);
+                progress?.Report(RcfXsl);
                 await client.DownloadFileTaskAsync(new Uri(Settings.Current.RcfUrl), RcfFilePath)
                     .ConfigureAwait(false);
-                progress?.Report(DlRcfXslComplete);
+                progress?.Report(RcfXslComplete);
             }
 
             progress?.Report(FideUnzip);
@@ -77,10 +77,10 @@ namespace Services
             progress?.Report(RcfProcess);
             await Task.Run(() => ProcessRcf()).ConfigureAwait(false);
             progress?.Report(Chk);
-            await Task.Run(() => CheckProfiles()).ConfigureAwait(false);
+            CheckProfiles();
             using (var db = new Ri2Context())
             {
-                var t = db.Info.SingleOrDefault(x => x.Name == InfoKeys.LastUpdate);
+                var t = db.Info.FirstOrDefault(x => x.Name == InfoKeys.LastUpdate);
                 if (t == null)
                 {
                     t = new InfoValue
@@ -116,9 +116,9 @@ namespace Services
                         continue;
                     }
 
-                    //if (!profile.FideProfileId.HasValue) continue;
-                    var id = profile.FideProfileId;
-                    var rcf = ri2.RcfProfiles.FirstOrDefault(x => x.FideProfileId == id);
+                    if (!profile.FideProfileId.HasValue) continue;
+                    var id = profile.FideProfileId.Value;
+                    var rcf = ri2.RcfProfiles.FirstOrDefault(x => x.FideProfileId.Value == id);
                     if (rcf == null) continue;
                     profile.RcfProfile = rcf;
                 }
@@ -138,6 +138,7 @@ namespace Services
                 var end = ws.Dimension.End;
                 var add = new List<RcfProfile>(75000);
                 var mod = new List<RcfProfile>(75000);
+
                 for (var i = start.Row + 1; i <= end.Row; i++)
                 {
                     var pr = new RcfProfile
@@ -159,7 +160,8 @@ namespace Services
                     };
                     if (pr.Birth < Settings.Current.BirthCutoff) continue;
                     var fideId = ws.Cells[i, RcfColumns.FideId].GetValue<int?>();
-                    using (var ri2 = new Ri2Context())
+
+                    using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
                     {
                         if (fideId.HasValue)
                         {
@@ -184,17 +186,13 @@ namespace Services
                     }
                 }
 
-                using (var db = new Ri2Context())
+                using (var ri2 = new Ri2Context())
                 {
-                    EFBatchOperation.For(db, db.RcfProfiles).InsertAll(add);
-                }
-
-                using (var db = new Ri2Context())
-                {
-                    EFBatchOperation.For(db, db.RcfProfiles).UpdateAll(mod,
-                        x => x.ColumnsToUpdate(c => c.Name).ColumnsToUpdate(c => c.Birth).ColumnsToUpdate(c => c.Std)
-                            .ColumnsToUpdate(c => c.Rpd).ColumnsToUpdate(c => c.Blz)
-                            .ColumnsToUpdate(c => c.FideProfileId));
+                    EFBatchOperation.For(ri2, ri2.RcfProfiles).InsertAll(add);
+                    EFBatchOperation.For(ri2, ri2.RcfProfiles).UpdateAll(mod,
+                        x => x.ColumnsToUpdate(c => c.Name, c => c.Birth, c => c.Std, c => c.Rpd, c => c.Blz,
+                            c => c.FideProfileId));
+                    ri2.SaveChanges();
                 }
             }
         }
@@ -231,7 +229,7 @@ namespace Services
                 };
                 if (pr.Birth < Settings.Current.BirthCutoff) continue;
                 //File.AppendAllText("log.txt",pr.FideId+Environment.NewLine);
-                using (var ri2 = new Ri2Context())
+                using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
                 {
                     var t = ri2.FideProfiles.FirstOrDefault(cp => cp.FideId == pr.FideId);
                     if (t != null)
@@ -249,13 +247,14 @@ namespace Services
             using (var db = new Ri2Context())
             {
                 EFBatchOperation.For(db, db.FideProfiles).InsertAll(add);
+                db.SaveChanges();
             }
 
             using (var db = new Ri2Context())
             {
                 EFBatchOperation.For(db, db.FideProfiles).UpdateAll(mod,
-                    x => x.ColumnsToUpdate(c => c.Name).ColumnsToUpdate(c => c.Birth).ColumnsToUpdate(c => c.Std)
-                        .ColumnsToUpdate(c => c.Rpd).ColumnsToUpdate(c => c.Blz));
+                    x => x.ColumnsToUpdate(c => c.Name, c => c.Birth, c => c.Std, c => c.Rpd, c => c.Blz));
+                db.SaveChanges();
             }
         }
     }

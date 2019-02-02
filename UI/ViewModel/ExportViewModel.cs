@@ -28,6 +28,10 @@ namespace UI.ViewModel
                 new RelayCommand<Guid>(guid => _exporter.ExportAsync(SelectedGroups.ToList(), _settings, guid));
             _exporter = exporter;
             _plugins = new ObservableCollection<IFileExporter>(_exporter.GetPlugins());
+            MessengerInstance.Register<string>(this, msg =>
+            {
+                if (msg == Ri2Constants.Notifications.GroupsUpdated) RaisePropertyChanged(nameof(Groups));
+            });
         }
 
         public ICommand GroupSelectionChangedCommand { get; }

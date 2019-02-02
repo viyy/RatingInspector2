@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Common;
 using DAL;
 using Interfaces;
@@ -32,43 +31,47 @@ namespace Services
             return plugin == null ? new List<int>() : plugin.Read(path);
         }
 
-        public async Task ImportAsync(IEnumerable<int> ids, Group group, ProfileType profileType)
+        public void ImportAsync(IEnumerable<int> ids, Group group, ProfileType profileType)
         {
             var profiles = new List<Profile>();
             using (var db = new Ri2Context())
             {
-                if (profileType == ProfileType.Rcf)
-                    foreach (var id in ids)
+                var gr = db.Groups.FirstOrDefault(x => x.Id == group.Id);
+                if (gr == null) return;
+                foreach (var ind in ids)
+                    if (profileType == ProfileType.Rcf)
                     {
-                        var pr = db.RcfProfiles.FirstOrDefault(x => x.RcfId == id);
+                        var pr = db.RcfProfiles.FirstOrDefault(x => x.RcfId == ind);
                         if (pr == null)
                         {
                             File.AppendAllText("err.log",
-                                DateTime.Now.ToShortTimeString() + "|ImportService|RcfId" + id + "not found\n");
+                                DateTime.Now.ToShortTimeString() + "|ImportService|RcfId" + ind + "not found" +
+                                Environment.NewLine);
                             continue;
                         }
 
                         if (db.Profiles.Any(x => x.RcfProfileId == pr.Id)) continue;
-                        profiles.Add(new Profile {RcfProfile = pr, FideProfile = pr.FideProfile, Group = group});
+                        profiles.Add(new Profile {RcfProfile = pr, FideProfile = pr.FideProfile, Group = gr});
                     }
-                else
-                    foreach (var id in ids)
+                    else
                     {
-                        var pr = db.FideProfiles.SingleOrDefault(x => x.FideId == id);
+                        var pr = db.FideProfiles.FirstOrDefault(profile => profile.FideId == ind);
                         if (pr == null)
                         {
                             File.AppendAllText("err.log",
-                                DateTime.Now.ToShortTimeString() + "|ImportService|FideId " + id + "not found\n");
+                                DateTime.Now.ToShortTimeString() + "|ImportService|FideId " + ind + "not found" +
+                                Environment.NewLine);
                             continue;
                         }
 
-                        var rcf = db.RcfProfiles.SingleOrDefault(x => x.FideProfile == pr);
-                        if (db.Profiles.Any(x => x.FideProfile == pr)) continue;
-                        profiles.Add(new Profile {FideProfile = pr, RcfProfile = rcf, Group = group});
+                        var rcf = db.RcfProfiles.FirstOrDefault(profile => profile.FideProfileId == pr.Id);
+                        if (db.Profiles.Any(x => x.FideProfileId == pr.Id)) continue;
+                        profiles.Add(new Profile {FideProfile = pr, RcfProfile = rcf, Group = gr});
                     }
 
                 db.Profiles.AddRange(profiles);
-                await db.SaveChangesAsync().ConfigureAwait(false);
+                db.SaveChanges();
+                //await db.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }

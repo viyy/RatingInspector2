@@ -25,8 +25,9 @@ namespace Services
         {
             using (var db = new Ri2Context())
             {
-                db.Groups.Attach(gr);
-                db.Entry(gr).State = EntityState.Modified;
+                var tmp = db.Groups.FirstOrDefault(x => x.Id == gr.Id);
+                if (tmp == null) return;
+                tmp.Name = gr.Name;
                 db.SaveChanges();
             }
         }
@@ -65,6 +66,18 @@ namespace Services
                 gr.Id = 0;
                 db.Groups.Attach(gr);
                 db.Entry(gr).State = EntityState.Added;
+                db.SaveChanges();
+            }
+        }
+
+        public void DeleteGroupWithProfiles(int id)
+        {
+            using (var db = new Ri2Context())
+            {
+                var gr = db.Groups.Include(x => x.Profiles).FirstOrDefault(x => x.Id == id);
+                if (gr == null) return;
+                db.Profiles.RemoveRange(gr.Profiles);
+                db.Groups.Remove(gr);
                 db.SaveChanges();
             }
         }

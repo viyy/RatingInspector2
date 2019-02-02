@@ -18,7 +18,8 @@ namespace Services
             {
                 if (string.IsNullOrEmpty(needle))
                 {
-                    res.AddRange(db.Profiles.Include(x => x.RcfProfile).Include(x => x.FideProfile).Include(x=>x.Group));
+                    res.AddRange(db.Profiles.Include(x => x.RcfProfile).Include(x => x.FideProfile)
+                        .Include(x => x.Group));
                 }
                 else
                 {
@@ -50,8 +51,11 @@ namespace Services
         {
             using (var db = new Ri2Context())
             {
-                db.Profiles.Attach(profile);
-                db.Entry(profile).State = EntityState.Modified;
+                var pr = db.Profiles.FirstOrDefault(x => x.Id == profile.Id);
+                if (pr == null) throw new Exception("profile");
+                var gr = db.Groups.FirstOrDefault(x => x.Id == profile.Group.Id);
+                if (gr == null) throw new Exception("group");
+                pr.Group = gr;
                 db.SaveChanges();
             }
         }

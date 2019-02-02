@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Common;
 using GalaSoft.MvvmLight;
@@ -29,9 +30,12 @@ namespace UI.ViewModel
             ClearCommand = new RelayCommand(() => Ids.Clear(), () => Ids.Count > 0);
             ImportCommand = new AsyncCommand(async () =>
             {
-                await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide)
-                    .ConfigureAwait(false);
+                await Task.Run(() =>
+                    _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide));
+                //await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide)
+                //.ConfigureAwait(false);
                 MessengerInstance.Send(Ri2Constants.Notifications.DbUpdated);
+                MessengerInstance.Send(Ri2Constants.Notifications.ProfilesUpdated);
             });
             AddIdCommand = new RelayCommand(() =>
             {
@@ -41,6 +45,11 @@ namespace UI.ViewModel
             });
             SelectFileCommand = new RelayCommand(SelectFile);
             DeleteIdCommand = new RelayCommand<int>(i => Ids.Remove(i), Ids.Count > 0);
+            MessengerInstance.Register<string>(this, msg =>
+            {
+                if (msg == Ri2Constants.Notifications.GroupsUpdated)
+                    RaisePropertyChanged(nameof(Groups));
+            });
         }
 
         public ObservableCollection<Group> Groups => new ObservableCollection<Group>(_import.GetGroups());

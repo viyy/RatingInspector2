@@ -10,19 +10,21 @@ namespace Models
 
         public virtual List<Profile> Profiles { get; set; }
 
-       public bool Equals(Group other)
+        public bool Equals(Group other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && Id == other.Id;
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Group a && Equals(a);
         }
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ Id;
-            }
+            return Id;
         }
 
         public static bool operator ==(Group left, Group right)

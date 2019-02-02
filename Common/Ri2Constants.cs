@@ -16,6 +16,8 @@
         public static class Notifications
         {
             public const string DbUpdated = "db_upd";
+            public const string GroupsUpdated = "grp_upd";
+            public const string ProfilesUpdated = "prf_upd";
             public const string Exit = "app_exit";
         }
 

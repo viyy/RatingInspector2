@@ -31,7 +31,7 @@ namespace UI.ViewModel
 
         private void NotifyMe(string msg)
         {
-            if (msg != Ri2Constants.Notifications.DbUpdated) return;
+            if (msg != Ri2Constants.Notifications.DbUpdated && msg!=Ri2Constants.Notifications.ProfilesUpdated) return;
             RaisePropertyChanged(nameof(LastUpdate));
             RaisePropertyChanged(nameof(Version));
             RaisePropertyChanged(nameof(ProfilesCount));

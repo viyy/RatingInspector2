@@ -145,6 +145,7 @@
                                         <ListView Height="250" Width="220"
                                                   ItemsSource="{Binding GroupList}"
                                                   SelectedItem="{Binding SelectedGroup}"
+                                                  IsSynchronizedWithCurrentItem="True"
                                                   SelectionMode="Single">
                                             <ListView.ItemTemplate>
                                                 <DataTemplate>
@@ -266,12 +267,12 @@
                             Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="SearchOverlay"
-                            Visibility="Collapsed"
+                            Visibility="Visible"
                             DataContext="{Binding Source={StaticResource Locator}, Path=SearchVM}">
                     <i:Interaction.Triggers>
-                        <ei:PropertyChangedTrigger 
-                            Binding="{Binding ElementName=SearchOverlay, Path=Visibility}" >
-                            <i:InvokeCommandAction Command="{Binding LoadProfilesOnLoadCommand}"/>
+                        <ei:PropertyChangedTrigger
+                            Binding="{Binding ElementName=SearchOverlay, Path=Visibility}">
+                            <i:InvokeCommandAction Command="{Binding LoadProfilesOnLoadCommand}" />
                         </ei:PropertyChangedTrigger>
                     </i:Interaction.Triggers>
                     <nc:Overlay.Background>
@@ -282,235 +283,322 @@
                         Padding="16,4,16,16">
                         <materialDesign:DialogHost>
                             <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.ColumnSpan="2"
-                                Grid.Column="0"
-                                Grid.Row="0"
-                                Style="{StaticResource MaterialDesignTitleTextBlock}"
-                                HorizontalAlignment="Center">
-                                Поиск и редактирование
-                            </TextBlock>
-                            <ListView
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Height="350"
-                                Width="550" 
-                                ItemsSource="{Binding Profiles}"
-                                SelectedItem="{Binding SelectedProfile}">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="РШФ Id"
-                                                        DisplayMemberBinding="{Binding RcfProfile.RcfId}"/>
-                                        <GridViewColumn Header="Fide Id"
-                                                        DisplayMemberBinding="{Binding FideProfile.FideId}"/>
-                                        <GridViewColumn Header="Имя (Рус)" Width="150"
-                                                        DisplayMemberBinding="{Binding RcfProfile.Name}"/>
-                                        <GridViewColumn Header="Имя (En)" Width="150"
-                                                        DisplayMemberBinding="{Binding FideProfile.Name}"/>
-                                        <GridViewColumn Header="Г.р."
-                                                        DisplayMemberBinding="{Binding Birth}"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                            <WrapPanel Grid.Column="0" Grid.Row="1" Margin="2">
-                                <Label Content="Поиск" VerticalContentAlignment="Bottom" />
-                                <TextBox Margin="2,0"
-                                         Width="300"
-                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                         materialDesign:HintAssist.Hint="Id или Фамилия"
-                                         VerticalContentAlignment="Bottom"
-                                         Text="{Binding SearchCriteria, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <TextBox.InputBindings>
-                                        <KeyBinding Key="Return"
-                                                    Command="{Binding ApplyFilterCommand}"/>
-                                        <KeyBinding Key="Enter"
-                                                    Command="{Binding ApplyFilterCommand}"/>
-                                    </TextBox.InputBindings>
-                                </TextBox>
-                                <Button
-                                    Command="{Binding RemoveFilterCommand}"
-                                    Style="{StaticResource MaterialDesignRaisedAccentButton}"
-                                    ToolTip="MaterialDesignFloatingActionMiniAccentButton"
-                                    Width="24" Height="24" Padding="0" Margin="2,0">
-                                    <materialDesign:PackIcon
-                                        Kind="BackspaceOutline"
-                                        Height="18"
-                                        Width="18" />
-                                </Button>
-                                <Button Margin="2,0" Padding="10,0"
-                                        Command="{Binding ApplyFilterCommand}">
-                                    <materialDesign:PackIcon Kind="UserSearchOutline" Height="32" Width="32" />
-                                </Button>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Grid.ColumnSpan="2"
+                                    Grid.Column="0"
+                                    Grid.Row="0"
+                                    Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                    HorizontalAlignment="Center">
+                                    Поиск и редактирование
+                                </TextBlock>
+                                <ListView
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Height="350"
+                                    Width="550"
+                                    ItemsSource="{Binding Profiles}"
+                                    SelectedItem="{Binding SelectedProfile}">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="РШФ Id"
+                                                            DisplayMemberBinding="{Binding RcfProfile.RcfId}" />
+                                            <GridViewColumn Header="Fide Id"
+                                                            DisplayMemberBinding="{Binding FideProfile.FideId}" />
+                                            <GridViewColumn Header="Имя (Рус)" Width="150"
+                                                            DisplayMemberBinding="{Binding RcfProfile.Name}" />
+                                            <GridViewColumn Header="Имя (En)" Width="150"
+                                                            DisplayMemberBinding="{Binding FideProfile.Name}" />
+                                            <GridViewColumn Header="Г.р."
+                                                            DisplayMemberBinding="{Binding Birth}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <WrapPanel Grid.Column="0" Grid.Row="1" Margin="2">
+                                    <Label Content="Поиск" VerticalContentAlignment="Bottom" />
+                                    <TextBox Margin="2,0"
+                                             Width="300"
+                                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                             materialDesign:HintAssist.Hint="Id или Фамилия"
+                                             VerticalContentAlignment="Bottom"
+                                             Text="{Binding SearchCriteria, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Return"
+                                                        Command="{Binding ApplyFilterCommand}" />
+                                            <KeyBinding Key="Enter"
+                                                        Command="{Binding ApplyFilterCommand}" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Button
+                                        Command="{Binding RemoveFilterCommand}"
+                                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                        ToolTip="MaterialDesignFloatingActionMiniAccentButton"
+                                        Width="24" Height="24" Padding="0" Margin="2,0">
+                                        <materialDesign:PackIcon
+                                            Kind="BackspaceOutline"
+                                            Height="18"
+                                            Width="18" />
+                                    </Button>
+                                    <Button Margin="2,0" Padding="10,0"
+                                            Command="{Binding ApplyFilterCommand}">
+                                        <materialDesign:PackIcon Kind="UserSearchOutline" Height="32" Width="32" />
+                                    </Button>
 
-                            </WrapPanel>
-                            <StackPanel Grid.Row="2" Grid.Column="1">
-                                <Button Margin="2" Padding="10,0"
-                                        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
-                                    <Button.CommandParameter>
-                                            <StackPanel Margin="8" >
+                                </WrapPanel>
+                                <StackPanel Grid.Row="2" Grid.Column="1">
+                                    <Button Margin="2" Padding="10,0"
+                                            Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
+                                        <Button.CommandParameter>
+                                            <StackPanel Margin="8">
                                                 <DockPanel HorizontalAlignment="Center">
-                                                    <Button DockPanel.Dock="Right" 
+                                                    <Button DockPanel.Dock="Right"
                                                             Style="{StaticResource MaterialDesignFlatButton}"
                                                             Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
                                                         X
                                                     </Button>
-                                                    <TextBlock 
+                                                    <TextBlock
                                                         DockPanel.Dock="Left"
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource MaterialDesignTitleTextBlock}"
-                                            Text="Карточка шахматиста"/>
-                                                    <TextBlock/>
+                                                        VerticalAlignment="Center"
+                                                        Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                                        Text="Карточка шахматиста" />
+                                                    <TextBlock />
                                                 </DockPanel>
                                                 <StackPanel Orientation="Horizontal">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition/>
-                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
                                                         <Grid.RowDefinitions>
-                                                            <RowDefinition/>
-                                                            <RowDefinition/>
-                                                            <RowDefinition/>
-                                                            <RowDefinition/>
-                                                            <RowDefinition/>
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                            <RowDefinition />
+                                                            <RowDefinition />
                                                         </Grid.RowDefinitions>
-                                                        <Label Content="РШФ Id" Grid.Column="0" Grid.Row="0"/>
-                                                        <TextBlock Text="{Binding SelectedProfile.RcfProfile.RcfId}" Grid.Column="1" Grid.Row="0"/>
-                                                        <Label Content="Fide Id" Grid.Column="0" Grid.Row="1"/>
-                                                        <TextBlock Text="{Binding SelectedProfile.FideProfile.FideId}" Grid.Column="1" Grid.Row="1"/>
-                                                        <Label Content="Имя (рус)" Grid.Column="0" Grid.Row="2"/>
-                                                        <TextBlock Text="{Binding SelectedProfile.RcfProfile.Name}" Grid.Column="1" Grid.Row="2"/>
-                                                        <Label Content="Имя (En)" Grid.Column="0" Grid.Row="3"/>
-                                                        <TextBlock Text="{Binding SelectedProfile.FideProfile.Name}" Grid.Column="1" Grid.Row="3"/>
-                                                        <Label Content="Год рожд." Grid.Column="0" Grid.Row="4"/>
-                                                        <TextBlock Text="{Binding SelectedProfile.Birth}" Grid.Column="1" Grid.Row="4"/>
+                                                        <Label VerticalAlignment="Center" Content="РШФ Id"
+                                                               Grid.Column="0" Grid.Row="0" />
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   Text="{Binding SelectedProfile.RcfProfile.RcfId}"
+                                                                   Grid.Column="1" Grid.Row="0" />
+                                                        <Label VerticalAlignment="Center" Content="Fide Id"
+                                                               Grid.Column="0" Grid.Row="1" />
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   Text="{Binding SelectedProfile.FideProfile.FideId}"
+                                                                   Grid.Column="1" Grid.Row="1" />
+                                                        <Label VerticalAlignment="Center" Content="Имя (рус)"
+                                                               Grid.Column="0" Grid.Row="2" />
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   Text="{Binding SelectedProfile.RcfProfile.Name}"
+                                                                   Grid.Column="1" Grid.Row="2" />
+                                                        <Label VerticalAlignment="Center" Content="Имя (En)"
+                                                               Grid.Column="0" Grid.Row="3" />
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   Text="{Binding SelectedProfile.FideProfile.Name}"
+                                                                   Grid.Column="1" Grid.Row="3" />
+                                                        <Label VerticalAlignment="Center" Content="Год рожд."
+                                                               Grid.Column="0" Grid.Row="4" />
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   Text="{Binding SelectedProfile.Birth}"
+                                                                   Grid.Column="1" Grid.Row="4" />
                                                     </Grid>
                                                     <StackPanel>
-                                                        <Button Margin="8,0">
-                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                                <materialDesign:PackIcon Kind="ContentCopy" VerticalAlignment="Center" />
-                                                                <TextBlock VerticalAlignment="Center" Text="Копировать"/>
+                                                        <Button Margin="8,0"
+                                                                Command="{Binding CopyToClipboardCommand}">
+
+                                                            <StackPanel Orientation="Horizontal"
+                                                                        VerticalAlignment="Center">
+                                                                <materialDesign:PackIcon Kind="ContentCopy"
+                                                                                         VerticalAlignment="Center" />
+                                                                <TextBlock VerticalAlignment="Center" Text="Копировать" />
                                                             </StackPanel>
                                                         </Button>
                                                         <GroupBox
-                                                        Header="Рейтинги"
-                                                        Style="{DynamicResource MaterialDesignCardGroupBox}"
-                                                        Margin="8">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition/>
-                                                                <ColumnDefinition/>
-                                                                <ColumnDefinition/>
-                                                                <ColumnDefinition/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                            </Grid.RowDefinitions>
-                                                            <Label 
-                                                                Margin="2"
-                                                                VerticalAlignment="Center" Content="РШФ" Grid.Column="0" Grid.Row="1"/>
-                                                            <Label
-                                                                Margin="2"
-                                                                VerticalAlignment="Center" Content="Fide" Grid.Column="0" Grid.Row="2"/>
-                                                            <Label
-                                                                Margin="2"
-                                                                VerticalAlignment="Center" Content="КЛС" Grid.Column="1" Grid.Row="0"/>
-                                                            <Label 
-                                                                Margin="2"
-                                                                VerticalAlignment="Center" Content="РПД" Grid.Column="2" Grid.Row="0"/>
-                                                            <Label
-                                                                Margin="2"
-                                                                VerticalAlignment="Center" Content="БЛЦ" Grid.Column="3" Grid.Row="0"/>
-                                                            <TextBlock 
-                                                                Margin="2"
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.RcfProfile.Std}"
-                                                                Grid.Column="1" 
-                                                                Grid.Row="1"/>
-                                                            <TextBlock 
-                                                                Margin="2" 
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.RcfProfile.Rpd}" 
-                                                                Grid.Column="2"
-                                                                Grid.Row="1"/>
-                                                            <TextBlock 
-                                                                Margin="2" 
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.RcfProfile.Blz}" 
-                                                                Grid.Column="3" 
-                                                                Grid.Row="1"/>
-                                                            <TextBlock 
-                                                                Margin="2" 
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.FideProfile.Std}" 
-                                                                Grid.Column="1"
-                                                                Grid.Row="2"/>
-                                                            <TextBlock 
-                                                                Margin="2" 
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.FideProfile.Rpd}" 
-                                                                Grid.Column="2"
-                                                                Grid.Row="2"/>
-                                                            <TextBlock 
-                                                                Margin="2" 
-                                                                VerticalAlignment="Center"
-                                                                Text="{Binding SelectedProfile.FideProfile.Blz}"
-                                                                Grid.Column="3" 
-                                                                Grid.Row="2"/>
-                                                        </Grid>
-                                                    </GroupBox>
+                                                            Header="Рейтинги"
+                                                            Style="{DynamicResource MaterialDesignCardGroupBox}"
+                                                            Margin="8">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition />
+                                                                    <RowDefinition />
+                                                                    <RowDefinition />
+                                                                </Grid.RowDefinitions>
+                                                                <Label
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center" Content="РШФ"
+                                                                    Grid.Column="0" Grid.Row="1" />
+                                                                <Label
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center" Content="Fide"
+                                                                    Grid.Column="0" Grid.Row="2" />
+                                                                <Label
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center" Content="КЛС"
+                                                                    Grid.Column="1" Grid.Row="0" />
+                                                                <Label
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center" Content="РПД"
+                                                                    Grid.Column="2" Grid.Row="0" />
+                                                                <Label
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center" Content="БЛЦ"
+                                                                    Grid.Column="3" Grid.Row="0" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.RcfProfile.Std}"
+                                                                    Grid.Column="1"
+                                                                    Grid.Row="1" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.RcfProfile.Rpd}"
+                                                                    Grid.Column="2"
+                                                                    Grid.Row="1" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.RcfProfile.Blz}"
+                                                                    Grid.Column="3"
+                                                                    Grid.Row="1" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.FideProfile.Std}"
+                                                                    Grid.Column="1"
+                                                                    Grid.Row="2" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.FideProfile.Rpd}"
+                                                                    Grid.Column="2"
+                                                                    Grid.Row="2" />
+                                                                <TextBlock
+                                                                    Margin="2"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{Binding SelectedProfile.FideProfile.Blz}"
+                                                                    Grid.Column="3"
+                                                                    Grid.Row="2" />
+                                                            </Grid>
+                                                        </GroupBox>
                                                     </StackPanel>
                                                 </StackPanel>
                                                 <WrapPanel>
-                                                    <Label Content="Группа"/>
+                                                    <Label Content="Группа" />
                                                     <ComboBox Margin="8,0,0,0"
                                                               ItemsSource="{Binding Groups}"
                                                               SelectedItem="{Binding SelectedProfile.Group}"
-                                                              IsSynchronizedWithCurrentItem="True"
                                                               Width="150">
                                                         <ComboBox.ItemTemplate>
                                                             <DataTemplate>
-                                                                <TextBlock Text="{Binding Name}"/>
+                                                                <TextBlock Text="{Binding Name}" />
                                                             </DataTemplate>
                                                         </ComboBox.ItemTemplate>
                                                     </ComboBox>
-                                                    <Button Margin="8,0,0,0">Сохранить</Button>
+                                                    <Button Margin="8,0,0,0"
+                                                            Command="{Binding SaveCurrentProfileCommand}">
+                                                        Сохранить
+                                                    </Button>
+                                                </WrapPanel>
+                                                <materialDesign:Snackbar
+                                                    IsActive="{Binding IsSnackBarVisible}">
+                                                    <materialDesign:SnackbarMessage
+                                                        Content="Скопировано"
+                                                        ActionContent="OK"
+                                                        ActionCommand="{Binding DismissSnackbarCommand}" />
+
+                                                </materialDesign:Snackbar>
+                                            </StackPanel>
+                                        </Button.CommandParameter>
+                                        <materialDesign:PackIcon Kind="UserCardDetails" Height="32" Width="32" />
+                                    </Button>
+                                    <Button Margin="2" Padding="10,0">
+                                        <materialDesign:PackIcon Kind="CallMerge" Height="32" Width="32" />
+                                    </Button>
+                                    <Button Margin="2" Padding="10,0"
+                                            Command="{Binding OpenRcfUrlCommand}">
+                                        РШФ
+                                    </Button>
+                                    <Button Margin="2" Padding="10,0"
+                                            Command="{Binding OpenFideUrlCommand}">
+                                        FIDE
+                                    </Button>
+                                    <Separator Margin="2,8" />
+                                    <Button
+                                        Margin="2"
+                                        Padding="10,0"
+                                        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+
+                                        Style="{StaticResource MaterialDesignRaisedAccentButton}">
+                                        <Button.CommandParameter>
+                                            <StackPanel Margin="8">
+                                                <TextBlock
+                                                    Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                                    Text="Вы точно хотите удалить этот профиль?" />
+                                                <WrapPanel VerticalAlignment="Center">
+                                                    <Label Content="РШФ Id: " VerticalAlignment="Center" />
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Text="{Binding SelectedProfile.RcfProfile.RcfId}" />
+                                                </WrapPanel>
+                                                <WrapPanel VerticalAlignment="Center">
+                                                    <Label VerticalAlignment="Center" Content="Fide Id: " />
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Text="{Binding SelectedProfile.FideProfile.FideId}" />
+                                                </WrapPanel>
+                                                <WrapPanel VerticalAlignment="Center">
+                                                    <Label VerticalAlignment="Center" Content="Имя: " />
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Text="{Binding SelectedProfile.RcfProfile.Name}" />
+                                                </WrapPanel>
+                                                <WrapPanel VerticalAlignment="Center">
+                                                    <Label VerticalAlignment="Center" Content="Имя (En): " />
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Text="{Binding SelectedProfile.FideProfile.Name}" />
+                                                </WrapPanel>
+                                                <WrapPanel VerticalAlignment="Center">
+                                                    <Label VerticalAlignment="Center" Content="Год рожд.: " />
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Text="{Binding SelectedProfile.Birth}" />
+                                                </WrapPanel>
+                                                <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Button
+                                                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                                                        Отмена
+                                                    </Button>
+                                                    <Button
+                                                        Margin="32,0,0,0"
+                                                        Style="{StaticResource MaterialDesignRaisedAccentButton}">
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Click">
+                                                                <i:InvokeCommandAction
+                                                                    Command="{Binding DeleteProfileCommand}" />
+                                                                <i:InvokeCommandAction
+                                                                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                        Удалить
+                                                    </Button>
                                                 </WrapPanel>
                                             </StackPanel>
                                         </Button.CommandParameter>
-                                    <materialDesign:PackIcon Kind="UserCardDetails" Height="32" Width="32" />
-                                </Button>
-                                <Button Margin="2" Padding="10,0">
-                                    <materialDesign:PackIcon Kind="CallMerge" Height="32" Width="32" />
-                                </Button>
-                                <Button Margin="2" Padding="10,0"
-                                        Command="{Binding OpenRcfUrlCommand}">
-                                    РШФ
-                                </Button>
-                                <Button Margin="2" Padding="10,0"
-                                        Command="{Binding OpenFideUrlCommand}">
-                                    FIDE
-                                </Button>
-                                <Separator Margin="2,8" />
-                                <Button
-                                    Margin="2"
-                                    Padding="10,0"
-                                    Style="{StaticResource MaterialDesignRaisedAccentButton}">
-                                    <materialDesign:PackIcon Kind="DeleteForeverOutline" Width="32" Height="32" />
-                                </Button>
-                            </StackPanel>
-                        </Grid>
+                                        <materialDesign:PackIcon Kind="DeleteForeverOutline" Width="32" Height="32" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
                         </materialDesign:DialogHost>
                     </materialDesign:Card>
                 </nc:Overlay>
@@ -726,6 +814,7 @@
                             </GroupBox>
                             <materialDesign:PopupBox
                                 Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                PopupMode="Click"
                                 PlacementMode="TopAndAlignRightEdges"
                                 ToolTipService.Placement="Right"
                                 Grid.Column="1"

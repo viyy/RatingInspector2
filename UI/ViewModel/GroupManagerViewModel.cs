@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Common;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Interfaces;
@@ -63,6 +64,7 @@ namespace UI.ViewModel
             _gm.CreateGroup(new Group {Id = 0, Name = "<New Group>"});
             RaisePropertyChanged(nameof(GroupList));
             SelectedGroup = GroupList.Last();
+            MessengerInstance.Send(Ri2Constants.Notifications.GroupsUpdated);
         }
 
         private void DeleteGroup()
@@ -73,11 +75,14 @@ namespace UI.ViewModel
             RaisePropertyChanged(nameof(SelectedGroup));
             RaisePropertyChanged(nameof(SourceGroup));
             RaisePropertyChanged(nameof(TargetGroup));
+            MessengerInstance.Send(Ri2Constants.Notifications.GroupsUpdated);
         }
 
         private void UpdateGroup()
         {
             _gm.UpdateGroup(SelectedGroup);
+            RaisePropertyChanged(nameof(GroupList));
+            MessengerInstance.Send(Ri2Constants.Notifications.GroupsUpdated);
         }
 
         private void AddToMerge()
@@ -99,6 +104,7 @@ namespace UI.ViewModel
             _gm.MergeGroups(SourceGroup, TargetGroup);
             SourceGroup = null;
             TargetGroup = null;
+            MessengerInstance.Send(Ri2Constants.Notifications.GroupsUpdated);
         }
 
         private void CancelMerge()
