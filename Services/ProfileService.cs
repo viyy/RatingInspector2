@@ -54,24 +54,28 @@ namespace Services
                 var pr = db.Profiles.FirstOrDefault(x => x.Id == profile.Id);
                 if (pr == null) throw new Exception("profile");
                 var gr = db.Groups.FirstOrDefault(x => x.Id == profile.Group.Id);
-                if (gr == null) throw new Exception("group");
-                pr.Group = gr;
+                pr.Group = gr ?? throw new Exception("group");
                 db.SaveChanges();
             }
         }
 
         public void MergeProfiles(Profile targetProfile, RcfProfile rcfProfile, FideProfile fideProfile)
         {
-            targetProfile.RcfProfile = rcfProfile;
-            targetProfile.FideProfile = fideProfile;
             using (var db = new Ri2Context())
             {
-                db.FideProfiles.Attach(fideProfile);
-                db.RcfProfiles.Attach(rcfProfile);
-                db.Profiles.Attach(targetProfile);
-                rcfProfile.FideProfile = fideProfile;
-                db.Entry(rcfProfile).State = EntityState.Modified;
-                db.Entry(targetProfile).State = EntityState.Modified;
+                targetProfile = db.Profiles.FirstOrDefault(x => x.Id == targetProfile.Id);
+                if (targetProfile == null) return;
+                if (rcfProfile != null)
+                    rcfProfile = db.RcfProfiles.FirstOrDefault(x => x.Id == rcfProfile.Id);
+                if (fideProfile != null)
+                    fideProfile = db.FideProfiles.FirstOrDefault(x => x.Id == fideProfile.Id);
+                if (rcfProfile != null) targetProfile.RcfProfile = rcfProfile;
+                if (fideProfile != null)
+                {
+                    targetProfile.FideProfile = fideProfile;
+                    if (rcfProfile != null) rcfProfile.FideProfile = fideProfile;
+                }
+
                 db.SaveChanges();
             }
         }

@@ -42,12 +42,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>1808AAD494ED994B1691F485F9FA6861FD27B74B</ManifestCertificateThumbprint>
@@ -124,6 +125,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\False2Visible.cs" />
     <Compile Include="Converters\False2Collapsed.cs" />
+    <Compile Include="Converters\Object2Bool.cs" />
     <Compile Include="Utils\AsyncCommand.cs" />
     <Compile Include="Utils\IAsyncCommand.cs" />
     <Compile Include="Utils\IErrorHandler.cs" />
@@ -150,10 +152,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ru-RU.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

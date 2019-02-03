@@ -138,6 +138,15 @@ namespace Services
                 var end = ws.Dimension.End;
                 var add = new List<RcfProfile>(75000);
                 var mod = new List<RcfProfile>(75000);
+                Dictionary<int, int> tf;
+                Dictionary<int, int> t;
+                using (var db = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
+                {
+                    tf = db.FideProfiles.Select(x => new {x.FideId, x.Id})
+                        .ToDictionary(o => o.FideId, o => o.Id);
+                    t = db.RcfProfiles.Select(x => new {x.RcfId, x.Id})
+                        .ToDictionary(o => o.RcfId, o => o.Id);
+                }
 
                 for (var i = start.Row + 1; i <= end.Row; i++)
                 {
@@ -161,22 +170,16 @@ namespace Services
                     if (pr.Birth < Settings.Current.BirthCutoff) continue;
                     var fideId = ws.Cells[i, RcfColumns.FideId].GetValue<int?>();
 
-                    using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
+                    //using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
                     {
                         if (fideId.HasValue)
-                        {
-                            var tf = ri2.FideProfiles.FirstOrDefault(x => x.FideId == fideId.Value);
-                            if (tf != null)
-                            {
-                                pr.FideProfileId = tf.Id;
-                                pr.FideProfile = tf;
-                            }
-                        }
+                            if (tf.ContainsKey(fideId.Value))
+                                pr.FideProfileId = tf[fideId.Value];
 
-                        var t = ri2.RcfProfiles.FirstOrDefault(cp => cp.RcfId == pr.RcfId);
-                        if (t != null)
+                        //var t = ri2.RcfProfiles.FirstOrDefault(cp => cp.RcfId == pr.RcfId);
+                        if (t.ContainsKey(pr.RcfId))
                         {
-                            pr.Id = t.Id;
+                            pr.Id = t[pr.RcfId];
                             mod.Add(pr);
                         }
                         else
@@ -202,6 +205,13 @@ namespace Services
             var query = SimpleXmlStream.SimpleStreamAxis(FideFilePath, FideXmlElements.Player);
             var add = new List<FideProfile>(100000);
             var mod = new List<FideProfile>(100000);
+            Dictionary<int, int> t;
+            using (var db = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
+            {
+                t = db.FideProfiles.Select(x => new {x.FideId, x.Id})
+                    .ToDictionary(o => o.FideId, o => o.Id);
+            }
+
             foreach (var profile in query)
             {
                 if (!Settings.Current.Filter.Contains(profile.Element(FideXmlElements.Country)?.Value)) continue;
@@ -229,12 +239,14 @@ namespace Services
                 };
                 if (pr.Birth < Settings.Current.BirthCutoff) continue;
                 //File.AppendAllText("log.txt",pr.FideId+Environment.NewLine);
-                using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
+                //using (var ri2 = new Ri2Context {Configuration = {AutoDetectChangesEnabled = false}})
                 {
-                    var t = ri2.FideProfiles.FirstOrDefault(cp => cp.FideId == pr.FideId);
-                    if (t != null)
+                    //var t = ri2.FideProfiles.FirstOrDefault(cp => cp.FideId == pr.FideId);
+                    //if (t != null)
+                    if (t.ContainsKey(pr.FideId))
                     {
-                        pr.Id = t.Id;
+                        //pr.Id = t.Id;
+                        pr.Id = t[pr.FideId];
                         mod.Add(pr);
                     }
                     else

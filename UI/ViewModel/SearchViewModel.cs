@@ -15,13 +15,21 @@ namespace UI.ViewModel
     {
         private readonly IProfileManager _pm;
 
+        private FideProfile _fide2Merge;
+
+        private int _fideSearch;
+
         private ObservableCollection<Group> _groups;
 
         private bool _isSnackBarVisible;
 
-        private bool _panelVisible;
+        private Visibility _panelVisibility = Visibility.Collapsed;
 
         private ObservableCollection<Profile> _profiles;
+
+        private RcfProfile _rcf2Merge;
+
+        private int _rcfSearch;
 
         private string _searchCriteria;
 
@@ -30,8 +38,6 @@ namespace UI.ViewModel
         public SearchViewModel(IProfileManager pm)
         {
             _pm = pm;
-
-            LoadProfilesOnLoadCommand = new RelayCommand(LoadProfilesOnLoad);
             RemoveFilterCommand = new RelayCommand(() =>
             {
                 SearchCriteria = null;
@@ -46,9 +52,11 @@ namespace UI.ViewModel
             SaveCurrentProfileCommand = new RelayCommand(SaveProfile);
             Groups = new ObservableCollection<Group>(_pm.GetGroups());
             MessengerInstance.Register<string>(this, NotifyMe);
+            SearchFideCommand = new RelayCommand(() => Fide2Merge = _pm.SearchFideProfile(FideSearch));
+            SearchRcfCommand = new RelayCommand(() => Rcf2Merge = _pm.SearchRcfProfile(RcfSearch));
+            MergeCommand = new RelayCommand(RunMerge);
         }
 
-        public ICommand LoadProfilesOnLoadCommand { get; }
         public ICommand RemoveFilterCommand { get; }
         public ICommand ApplyFilterCommand { get; }
         public ICommand OpenRcfUrlCommand { get; }
@@ -57,6 +65,9 @@ namespace UI.ViewModel
         public ICommand DismissSnackbarCommand { get; }
         public ICommand DeleteProfileCommand { get; }
         public ICommand SaveCurrentProfileCommand { get; }
+        public ICommand SearchFideCommand { get; }
+        public ICommand SearchRcfCommand { get; }
+        public ICommand MergeCommand { get; }
 
         public bool IsSnackBarVisible
         {
@@ -86,6 +97,47 @@ namespace UI.ViewModel
         {
             get => _searchCriteria;
             set => Set(ref _searchCriteria, value);
+        }
+
+        public Visibility PanelVisibility
+        {
+            get => _panelVisibility;
+            set
+            {
+                if (_panelVisibility != value && value == Visibility.Visible)
+                    Profiles = new ObservableCollection<Profile>(_pm.GetProfiles());
+                _panelVisibility = value;
+            }
+        }
+
+        public int RcfSearch
+        {
+            get => _rcfSearch;
+            set => Set(ref _rcfSearch, value);
+        }
+
+        public int FideSearch
+        {
+            get => _fideSearch;
+            set => Set(ref _fideSearch, value);
+        }
+
+        public FideProfile Fide2Merge
+        {
+            get => _fide2Merge;
+            set => Set(ref _fide2Merge, value);
+        }
+
+        public RcfProfile Rcf2Merge
+        {
+            get => _rcf2Merge;
+            set => Set(ref _rcf2Merge, value);
+        }
+
+        private void RunMerge()
+        {
+            _pm.MergeProfiles(SelectedProfile, Rcf2Merge, Fide2Merge);
+            Profiles = new ObservableCollection<Profile>(_pm.GetProfiles(SearchCriteria));
         }
 
         private void NotifyMe(string msg)
@@ -124,19 +176,6 @@ namespace UI.ViewModel
             IsSnackBarVisible = true;
         }
 
-        private void LoadProfilesOnLoad()
-        {
-            if (!_panelVisible)
-            {
-                Profiles = new ObservableCollection<Profile>(_pm.GetProfiles());
-                _panelVisible = true;
-            }
-            else
-            {
-                _panelVisible = false;
-            }
-        }
-
         private void ApplyFilter(string needle)
         {
             Profiles = new ObservableCollection<Profile>(_pm.GetProfiles(needle));
@@ -157,6 +196,7 @@ namespace UI.ViewModel
         private void DeleteProfile()
         {
             _pm.DeleteProfile(SelectedProfile.Id);
+            Profiles = new ObservableCollection<Profile>(_pm.GetProfiles(SearchCriteria));
         }
     }
 }
