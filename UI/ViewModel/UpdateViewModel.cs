@@ -24,6 +24,11 @@ namespace UI.ViewModel
         {
             _upd = updateService;
             RunUpdateCommand = new AsyncCommand(UpdateAsync);
+            MessengerInstance.Register<string>(this, (msg) =>
+            {
+                if (msg!=Ri2Constants.Notifications.Exit) return;
+                _upd.CleanUp();
+            });
         }
 
         public IAsyncCommand RunUpdateCommand { get; }

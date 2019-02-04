@@ -13,6 +13,7 @@ using Models;
 using OfficeOpenXml;
 using Services.Helpers;
 using static Common.Ri2Constants;
+using Exception = System.Exception;
 
 namespace Services
 {
@@ -99,6 +100,23 @@ namespace Services
             }
 
             progress?.Report(CompleteMsg);
+        }
+
+        public void CleanUp()
+        {
+            if (!Settings.Current.RemoveTmpFiles) return;
+            try
+            {
+                File.Delete(FideZipPath);
+                File.Delete(FideFilePath);
+                File.Delete(RcfFilePath);
+            }
+            catch (Exception e)
+            {
+                File.AppendAllText("err.log",
+                    DateTime.Now.ToShortTimeString() + "| UpdateService | CleanUp |" +e.Message +
+                    Environment.NewLine);
+            }
         }
 
         private static void CheckProfiles()
