@@ -37,6 +37,7 @@ namespace UI
             _overlays.Add("update", UpdateOverlay);
             _overlays.Add("search", SearchOverlay);
             _overlays.Add("groups", GroupOverlay);
+            _overlays.Add("about", AboutOverlay);
         }
 
         private void EventTrap(object sender, MouseButtonEventArgs e)

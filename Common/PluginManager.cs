@@ -10,6 +10,7 @@ namespace Common
     {
         public static List<TInterface> GetPlugins<TInterface>()
         {
+            if (!Directory.Exists(@"plugins\")) Directory.CreateDirectory(@"plugins\");
             return (from file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"plugins\"),
                     "*.dll")
                 from type in Assembly.LoadFrom(file).GetTypes()

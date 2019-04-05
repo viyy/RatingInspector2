@@ -48,6 +48,7 @@ namespace UI.ViewModel
             SimpleIoc.Default.Register<ExportViewModel>();
             SimpleIoc.Default.Register<GroupManagerViewModel>();
             SimpleIoc.Default.Register<SearchViewModel>();
+            SimpleIoc.Default.Register<AboutViewModel>();
 
         }
 
@@ -64,6 +65,8 @@ namespace UI.ViewModel
         public GroupManagerViewModel GroupVM => ServiceLocator.Current.GetInstance<GroupManagerViewModel>();
 
         public SearchViewModel SearchVM => ServiceLocator.Current.GetInstance<SearchViewModel>();
+
+        public AboutViewModel AboutVM => ServiceLocator.Current.GetInstance<AboutViewModel>();
 
         public static void Cleanup()
         {

@@ -58,7 +58,7 @@ namespace UI.ViewModel
             {
                 File.AppendAllText("log.txt",
                     string.Format(Resources.UpdateViewModel_UpdateAsync_Error, DateTime.Now.ToLongDateString(),
-                        e.Message));
+                        e.Message+"|"+e.InnerException?.Message));
             }
             finally
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -123,7 +124,8 @@ namespace Services
         {
             using (var ri2 = new Ri2Context())
             {
-                foreach (var profile in ri2.Profiles.Include("RcfProfile").Include("FideProfile"))
+                
+                foreach (var profile in ri2.Profiles.Include(x=>x.RcfProfile.FideProfile).Include(x=>x.FideProfile))
                 {
                     if (profile.FideProfileId.HasValue && profile.RcfProfileId.HasValue) continue;
 
@@ -136,7 +138,7 @@ namespace Services
 
                     if (!profile.FideProfileId.HasValue) continue;
                     var id = profile.FideProfileId.Value;
-                    var rcf = ri2.RcfProfiles.FirstOrDefault(x => x.FideProfileId.Value == id);
+                    var rcf = ri2.RcfProfiles.FirstOrDefault(x => x.FideProfileId == id);
                     if (rcf == null) continue;
                     profile.RcfProfile = rcf;
                 }

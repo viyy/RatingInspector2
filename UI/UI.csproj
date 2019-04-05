@@ -92,7 +92,13 @@
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Nelfias.Controls">
-      <HintPath>.\Nelfias.Controls.dll</HintPath>
+      <HintPath>..\..\..\Education\Unit3\WpfEmailSender\Nelfias.Controls\bin\Release\Nelfias.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Nelfias.Crypto">
+      <HintPath>..\..\..\Nelfias.License\Nelfias.License\bin\Release\Nelfias.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Nelfias.License">
+      <HintPath>..\..\..\Nelfias.License\Nelfias.License\bin\Release\Nelfias.License.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -132,6 +138,7 @@
     <Compile Include="Utils\ProcessStates.cs" />
     <Compile Include="Utils\StateMachine.cs" />
     <Compile Include="Utils\TaskUtilities.cs" />
+    <Compile Include="ViewModel\AboutViewModel.cs" />
     <Compile Include="ViewModel\ExportViewModel.cs" />
     <Compile Include="ViewModel\GroupManagerViewModel.cs" />
     <Compile Include="ViewModel\ImportViewModel.cs" />

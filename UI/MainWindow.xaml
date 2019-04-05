@@ -67,6 +67,10 @@
                         Tag="settings">
                     <materialDesign:PackIcon Kind="SettingsOutline" Width="44" Height="44" />
                 </Button>
+                <Button Height="48" Width="48" ToolTip="О Программе" Margin="2" Padding="0" Click="ShowOverlay"
+                        Tag="about">
+                    <materialDesign:PackIcon Kind="HelpOutline" Width="44" Height="44" />
+                </Button>
             </WrapPanel>
             <Grid Margin="4">
                 <Grid.ColumnDefinitions>
@@ -83,7 +87,95 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+
                 <nc:Overlay
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="3"
+                    Grid.RowSpan="7"
+                    Panel.ZIndex="300"
+                    x:Name="AboutOverlay"
+                    Visibility="Visible">
+                    <nc:Overlay.Background>
+                        <SolidColorBrush Color="#7F494949" />
+                    </nc:Overlay.Background>
+                    <materialDesign:Card
+                        DataContext="{Binding Source={StaticResource Locator}, Path=AboutVM}"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                        Padding="16,4,16,16">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource MaterialDesignTitleTextBlock}"
+                                HorizontalAlignment="Center"
+                                Text="Информация" />
+                            <TabControl>
+                            <TabItem Header="О программе">
+                                <TextBlock 
+                                    Width="300"
+                                    Text="{Binding AboutText}" TextWrapping="Wrap"/>
+                            </TabItem>
+                            <TabItem Header="Лицензия">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Column="0" Grid.Row="0">Тип лицензии</Label>
+                                    <Label Grid.Column="0" Grid.Row="1">Владелец</Label>
+                                    <Label Grid.Column="0" Grid.Row="2">Ключ</Label>
+                                    <Label Grid.Column="0" Grid.Row="3">Установить ключ?</Label>
+                                    
+                                    <TextBlock Text="{Binding LicenseType}" Grid.Column="1" Grid.Row="0"/>
+                                    <TextBlock Text="{Binding LicenseOwner}" Grid.Row="1" Grid.Column="1"/>
+                                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Key, UpdateSourceTrigger=PropertyChanged}"
+                                             TextWrapping="Wrap"
+                                             VerticalAlignment="Stretch"
+                                             Width="280"
+                                             Margin="2"
+                                             VerticalScrollBarVisibility="Auto"
+                                             SpellCheck.IsEnabled="True"
+                                             materialDesign:HintAssist.Hint="Licence key"
+                                             Height="100"
+                                             />
+                                    <Button Margin="2"  Grid.Column="1" Grid.Row="3" Content="Установить" Command="{Binding InstallCommand}"/>
+                                    
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Плагины">
+                                <ListView Width="300" Height="300" ItemsSource="{Binding Plugins}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                <WrapPanel>
+                                                    <TextBlock Text="Автор: " VerticalAlignment="Center" Margin="2"/>
+                                                    <TextBlock Text="{Binding Author}" VerticalAlignment="Center" Margin="2"/>
+                                                </WrapPanel>
+                                                <WrapPanel>
+                                                    <TextBlock Text="Версия: " VerticalAlignment="Center" Margin="2"/>
+                                                    <TextBlock Text="{Binding Version}" VerticalAlignment="Center" Margin="2"/>
+                                                </WrapPanel>
+                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="2"/>
+
+                                            </StackPanel>
+                                            
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+
+                                </ListView>
+                            </TabItem>
+
+                        </TabControl>
+                        </StackPanel>
+                    </materialDesign:Card>
+                    </nc:Overlay>
+                        <nc:Overlay
                     Grid.Column="0"
                     Grid.Row="0"
                     Grid.ColumnSpan="3"
@@ -270,7 +362,7 @@
                             Grid.RowSpan="7"
                             Panel.ZIndex="200"
                             x:Name="SearchOverlay"
-                            Visibility="{Binding PanelVisibility, Mode=TwoWay}"
+                            Visibility="{Binding PanelVisibility, Mode=TwoWay, FallbackValue=Collapsed}"
                             DataContext="{Binding Source={StaticResource Locator}, Path=SearchVM}">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
