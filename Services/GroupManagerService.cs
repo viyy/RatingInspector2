@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using DAL;
 using Interfaces;
 using Models;
+using Nelfias.License;
+using License = Common.License;
 
 namespace Services
 {
@@ -61,8 +66,13 @@ namespace Services
 
         public void CreateGroup(Group gr)
         {
+            // License block++
+            var limit = License.GetData("groups");
+            if (!int.TryParse(limit, out var limitResult)) throw new InvalidLicenseException("Group Manager: Invalid License Data");
+            // License block--
             using (var db = new Ri2Context())
             {
+                if (limitResult!=-1 && db.Groups.Count()>=limitResult) throw new OutOfLicenseLimitException("Group Limit Reached");
                 gr.Id = 0;
                 db.Groups.Attach(gr);
                 db.Entry(gr).State = EntityState.Added;

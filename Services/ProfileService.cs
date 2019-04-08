@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using Common;
 using DAL;
 using Interfaces;
 using Models;
@@ -61,6 +62,9 @@ namespace Services
 
         public void MergeProfiles(Profile targetProfile, RcfProfile rcfProfile, FideProfile fideProfile)
         {
+            //License block++
+            if (License.GetData("merge")!="true") throw new OutOfLicenseLimitException("Profiles: You can not merge profiles with your current license");
+            //License block--
             using (var db = new Ri2Context())
             {
                 targetProfile = db.Profiles.FirstOrDefault(x => x.Id == targetProfile.Id);

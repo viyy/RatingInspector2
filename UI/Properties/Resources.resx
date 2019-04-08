@@ -121,7 +121,7 @@
     <value>Rating Inspector 2. 2018-2019 (c). Created by Nelfias. Система отслеживания шахматного рейтинга шахматистов России.</value>
   </data>
   <data name="UiVersion" xml:space="preserve">
-    <value>1.0</value>
+    <value>1.1</value>
   </data>
   <data name="UpdateViewModel_UpdateAsync_Error" xml:space="preserve">
     <value>{0} | UpdateViewModel | {1}</value>

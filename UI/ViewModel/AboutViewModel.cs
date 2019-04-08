@@ -14,9 +14,9 @@ namespace UI.ViewModel
 
         public ObservableCollection<IPlugin> Plugins { get; } = new ObservableCollection<IPlugin>(PluginManager.GetPlugins<IPlugin>());
         
-        public string LicenseType => License.Current["type"];
+        public string LicenseType => License.GetData("type");
 
-        public string LicenseOwner => License.Current["owner"];
+        public string LicenseOwner => License.GetData("owner");
 
         private string _key;
 

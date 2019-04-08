@@ -70,7 +70,7 @@ namespace UI.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 1.0.
+        ///   Ищет локализованную строку, похожую на 1.1.
         /// </summary>
         internal static string UiVersion {
             get {

@@ -7,6 +7,7 @@ using Common;
 using DAL;
 using Interfaces;
 using Models;
+using Nelfias.License;
 using PluginShared;
 using Services.Helpers;
 
@@ -34,13 +35,29 @@ namespace Services
                     t.AddRange(gr.Profiles);
                 }
             }
-
+            //License Block++
+            var limit = License.GetData("export");
+            if (!int.TryParse(limit, out var limitResult)) throw new InvalidLicenseException("Export: Invalid License Data");
+            if (limitResult != -1 && t.Count>limitResult)
+            {
+                t = t.Take(limitResult).ToList();
+            }
+            //License Block--
             return ExportAsync(t, settings, pluginGuid);
         }
 
         public Task ExportAsync(IEnumerable<Profile> profiles, ExportSettings settings, Guid pluginGuid)
         {
-            return _plugins.First(x => x.GUID == pluginGuid).ExportAsync(profiles, settings);
+            //License Block++
+            var limit = License.GetData("export");
+            if (!int.TryParse(limit, out var limitResult)) throw new InvalidLicenseException("Export: Invalid License Data");
+            var enumerable = profiles.ToList();
+            if (limitResult != -1 && enumerable.Count > limitResult)
+            {
+                enumerable = enumerable.Take(limitResult).ToList();
+            }
+            //License Block--
+            return _plugins.First(x => x.GUID == pluginGuid).ExportAsync(enumerable, settings);
         }
 
         public IEnumerable<IFileExporter> GetPlugins()

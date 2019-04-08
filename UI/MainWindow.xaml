@@ -95,7 +95,7 @@
                     Grid.RowSpan="7"
                     Panel.ZIndex="300"
                     x:Name="AboutOverlay"
-                    Visibility="Visible">
+                    Visibility="Collapsed">
                     <nc:Overlay.Background>
                         <SolidColorBrush Color="#7F494949" />
                     </nc:Overlay.Background>

@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="License.cs" />
+    <Compile Include="OutOfLicenseLimitException.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="ProfileType.cs" />
     <Compile Include="Ri2Constants.cs" />

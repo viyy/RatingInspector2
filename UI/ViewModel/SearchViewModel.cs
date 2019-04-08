@@ -46,7 +46,7 @@ namespace UI.ViewModel
             ApplyFilterCommand = new RelayCommand(() => ApplyFilter(SearchCriteria));
             OpenRcfUrlCommand = new RelayCommand(OpenRcfUrl, () => SelectedProfile?.RcfProfile != null);
             OpenFideUrlCommand = new RelayCommand(OpenFideUrl, () => SelectedProfile?.FideProfile != null);
-            CopyToClipboardCommand = new RelayCommand(CopyToClipboard, () => SelectedProfile != null);
+            CopyToClipboardCommand = new RelayCommand(CopyToClipboard, () => SelectedProfile != null && License.GetData("copy")=="true");
             DismissSnackbarCommand = new RelayCommand(() => { IsSnackBarVisible = false; });
             DeleteProfileCommand = new RelayCommand(DeleteProfile, () => SelectedProfile != null);
             SaveCurrentProfileCommand = new RelayCommand(SaveProfile);
@@ -161,6 +161,9 @@ namespace UI.ViewModel
 
         private void CopyToClipboard()
         {
+            //License block++
+            if (License.GetData("copy")!="true") throw new OutOfLicenseLimitException("Search system: You can not copy profile with your current license");
+            //License block--
             var str = "Имя:".PadRight(10) + SelectedProfile.RcfProfile?.Name + Environment.NewLine;
             str += "Имя(En):".PadRight(10) + SelectedProfile.FideProfile?.Name + Environment.NewLine;
             str += "Г.р.:".PadRight(10) + SelectedProfile.Birth + Environment.NewLine;
