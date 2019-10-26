@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UsefullFunctions
+namespace ConsoleUI.Utilities
 {
     public static class ConsoleMenu
     {

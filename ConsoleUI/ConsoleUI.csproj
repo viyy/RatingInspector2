@@ -54,6 +54,10 @@
         <Project>{37294027-f49e-41f5-b8e3-55f661315f27}</Project>
         <Name>Interfaces</Name>
       </ProjectReference>
+      <ProjectReference Include="..\Models\Models.csproj">
+        <Project>{66936832-b706-49fa-b12b-7447f6e8148a}</Project>
+        <Name>Models</Name>
+      </ProjectReference>
       <ProjectReference Include="..\Services\Services.csproj">
         <Project>{9ff22c7d-1e71-49a3-89a7-bd8536c9507c}</Project>
         <Name>Services</Name>

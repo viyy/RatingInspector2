@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,11 +63,34 @@ namespace Services
             using (var db = new Ri2Context())
             {
                 var tmp = db.Groups.Include(x => x.Profiles).FirstOrDefault(x => x.Id == gr.Id);
-                if (tmp == null || tmp.Profiles.Count != 0)
+                var forced = false;
+                if (ConfigurationManager.AppSettings["forcedgroupdelete"] != null)
                 {
-                    Logger.Log("GroupManagerService", $"Group [{gr.Id}]{gr.Name} not empty. Can not delete.", LogLevel.Warning);
+                    bool.TryParse(ConfigurationManager.AppSettings["forcedgroupdelete"], out forced);
+                }
+
+                if (tmp == null)
+                {
+                    Logger.Log("GroupManagerService", "Group not found", LogLevel.Error);
                     return;
                 }
+
+                if (!forced)
+                {
+                    if (tmp.Profiles.Count != 0)
+                    {
+                        Logger.Log("GroupManagerService", $"Group [{gr.Id}]{gr.Name} not empty. Can not delete.",
+                            LogLevel.Warning);
+                        return;
+                    }
+                }
+                else
+                {
+                    Logger.Log("GroupManagerService", "Forced mode enabled", LogLevel.Warning);
+                    DeleteGroupWithProfiles(gr.Id);
+                    return;
+                }
+
                 db.Groups.Remove(tmp);
                 db.SaveChanges();
             }
@@ -105,11 +129,15 @@ namespace Services
 
         public void DeleteGroupWithProfiles(int id)
         {
-            Logger.Log("GroupManagerService", $"Deleting group [{id}] --forced");
+            Logger.Log("GroupManagerService", $"Deleting group [{id}] --forced", LogLevel.Warning);
             using (var db = new Ri2Context())
             {
                 var gr = db.Groups.Include(x => x.Profiles).FirstOrDefault(x => x.Id == id);
-                if (gr == null) return;
+                if (gr == null)
+                {
+                    Logger.Log("GroupManagerService", "Group not found", LogLevel.Error);
+                    return;
+                }
                 db.Profiles.RemoveRange(gr.Profiles);
                 db.Groups.Remove(gr);
                 db.SaveChanges();
