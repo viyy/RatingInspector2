@@ -1,9 +1,22 @@
-﻿namespace ConsoleUI
+﻿using ConsoleUI.Pages;
+using Services;
+
+namespace ConsoleUI
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            var pm = new PageManager();
+            var main = new MainPage(new InfoService());
+            var update = new UpdatePage(new UpdateService());
+            pm.RegisterPage(main);
+            pm.RegisterPage(update);
+            pm.Init();
+            while (!pm.Render())
+            {
+                //
+            }
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿<Window x:Class="UI.UrlOpenDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        Title="UrlOpenDialog" Width="300" WindowStartupLocation="CenterScreen" SizeToContent="Height"
+        ContentRendered="Window_ContentRendered">
+    <StackPanel Margin="5">
+        <WrapPanel>
+            <materialDesign:PackIcon Kind="Web" Height="48" Width="48" Foreground="#DD000000" />
+            <Label Content="Input URL:" VerticalAlignment="Center" x:Name="QuestionLbl"/>
+        </WrapPanel>
+        <TextBox x:Name="UrlBox" Text="www.example.com/page" Margin="2"/>
+        <Grid Margin="0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Margin="10,2" IsDefault="True" Height="32" Click="Button_Click">
+                <materialDesign:PackIcon Kind="CheckboxMarkedCircleOutline" Height="24" Width="24" />
+            </Button>
+            <Button Margin="10,2" IsCancel="True" Grid.Column="1" Style="{StaticResource MaterialDesignRaisedAccentButton}">
+                <materialDesign:PackIcon Kind="CloseBoxOutline" Height="24" Width="24" />
+            </Button>
+        </Grid>
+    </StackPanel>
+</Window>

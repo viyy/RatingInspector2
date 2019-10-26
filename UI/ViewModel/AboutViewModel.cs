@@ -24,12 +24,14 @@ namespace UI.ViewModel
         {
             InstallCommand = new RelayCommand(()=>
             {
+                Logger.Log("AboutVM", "Installing new key");
                 License.Set(Key);
                 RaisePropertyChanged(nameof(LicenseType));
                 RaisePropertyChanged(nameof(LicenseOwner));
                 Key = string.Empty;
                 RaisePropertyChanged(nameof(Key));
             }, ()=>!string.IsNullOrEmpty(Key));
+            Logger.Log("AboutVM initialized");
         }
 
         public string Key

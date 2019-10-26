@@ -61,7 +61,9 @@ namespace UI.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Rating Inspector 2. 2018-2019 (c). Created by Nelfias. Система отслеживания шахматного рейтинга шахматистов России..
+        ///   Ищет локализованную строку, похожую на Rating Inspector 2. 2018-2019 ©.
+        ///Created by Nelfias.
+        ///Система отслеживания рейтинга шахматистов России..
         /// </summary>
         internal static string AboutText {
             get {

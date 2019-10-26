@@ -29,6 +29,7 @@ namespace UI.ViewModel
                 if (msg!=Ri2Constants.Notifications.Exit) return;
                 _upd.CleanUp();
             });
+            Logger.Log("UpdateVM initialized");
         }
 
         public IAsyncCommand RunUpdateCommand { get; }
@@ -56,9 +57,7 @@ namespace UI.ViewModel
             }
             catch (Exception e)
             {
-                File.AppendAllText("log.txt",
-                    string.Format(Resources.UpdateViewModel_UpdateAsync_Error, DateTime.Now.ToLongDateString(),
-                        e.Message+"|"+e.InnerException?.Message));
+                Logger.Log("UpdateVM", $"Unable to update: {e.Message}");
             }
             finally
             {

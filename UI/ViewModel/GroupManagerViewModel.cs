@@ -28,6 +28,7 @@ namespace UI.ViewModel
             ConfirmMergeCommand = new RelayCommand(RunMerge, () => SourceGroup != null && TargetGroup != null);
             CancelMergeCommand = new RelayCommand(CancelMerge);
             MergeCommand = new RelayCommand(AddToMerge, () => SelectedGroup != null);
+            Logger.Log("GroupManagerVM initialized");
         }
 
         public ICommand AddCommand { get; }
@@ -61,6 +62,7 @@ namespace UI.ViewModel
 
         private void CreateGroup()
         {
+            Logger.Log("GroupManagerVM", "Creating new group");
             _gm.CreateGroup(new Group {Id = 0, Name = "<New Group>"});
             RaisePropertyChanged(nameof(GroupList));
             SelectedGroup = GroupList.Last();
@@ -69,6 +71,7 @@ namespace UI.ViewModel
 
         private void DeleteGroup()
         {
+            Logger.Log("GroupManagerVM", $"Deleting group [{SelectedGroup.Id}] {SelectedGroup.Name}");
             _gm.DeleteGroup(SelectedGroup);
             SelectedGroup = null;
             RaisePropertyChanged(nameof(GroupList));
@@ -80,6 +83,7 @@ namespace UI.ViewModel
 
         private void UpdateGroup()
         {
+            Logger.Log("GroupManagerVM", $"Updating group [{SelectedGroup.Id}] {SelectedGroup.Name}");
             _gm.UpdateGroup(SelectedGroup);
             RaisePropertyChanged(nameof(GroupList));
             MessengerInstance.Send(Ri2Constants.Notifications.GroupsUpdated);
@@ -101,6 +105,7 @@ namespace UI.ViewModel
         {
             if (SourceGroup == null || TargetGroup == null)
                 return;
+            Logger.Log("GroupManagerVM", $"Merging groups: [{SourceGroup.Id}] {SourceGroup.Name}, [{TargetGroup.Id}] {TargetGroup.Name}");
             _gm.MergeGroups(SourceGroup, TargetGroup);
             SourceGroup = null;
             TargetGroup = null;

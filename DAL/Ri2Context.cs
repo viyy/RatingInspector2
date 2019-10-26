@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using Common;
 using Models;
 
 namespace DAL
@@ -9,7 +11,15 @@ namespace DAL
 
         public Ri2Context() : base("DefaultConnection")
         {
-            Database.SetInitializer(new DbInitializer());
+            try
+            {
+                Database.SetInitializer(new DbInitializer());
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("DAL", $"Initialization Error: {ex.Message}", LogLevel.Error);
+            }
+
         }
 
         public DbSet<InfoValue> Info { get; set; }

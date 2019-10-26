@@ -20,11 +20,17 @@ namespace UI.ViewModel
             _info = info;
             MessengerInstance.Register<string>(this, NotifyMe);
             CloseCommand = new RelayCommand(CloseApp, StateMachine.CurrentState==ProcessStates.Idle);
+            Logger.Log("MainVM initialized");
         }
 
         private void CloseApp()
         {
-            if (StateMachine.CurrentState!=ProcessStates.Idle) return;
+            Logger.Log("Shutdown...");
+            if (StateMachine.CurrentState != ProcessStates.Idle)
+            {
+                Logger.Log("Some tasks not completed. Abort.");
+                return;
+            }
             MessengerInstance.Send(Ri2Constants.Notifications.Exit);
             App.Current.Shutdown();
         }
@@ -32,6 +38,7 @@ namespace UI.ViewModel
         private void NotifyMe(string msg)
         {
             if (msg != Ri2Constants.Notifications.DbUpdated && msg!=Ri2Constants.Notifications.ProfilesUpdated) return;
+            Logger.Log("MainVM", "Updating view");
             RaisePropertyChanged(nameof(LastUpdate));
             RaisePropertyChanged(nameof(Version));
             RaisePropertyChanged(nameof(ProfilesCount));

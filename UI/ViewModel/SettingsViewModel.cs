@@ -21,6 +21,7 @@ namespace UI.ViewModel
                 RaisePropertyChanged(nameof(DeleteFiles));
                 RaisePropertyChanged(nameof(Filter));
             });
+            Logger.Log("SettingsVM initialized");
         }
 
         public ICommand SaveCommand { get; }

@@ -12,6 +12,8 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using System.Configuration;
+using Common;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
@@ -32,6 +34,20 @@ namespace UI.ViewModel
         /// </summary>
         public ViewModelLocator()
         {
+            var loglevel = LogLevel.Error;
+            var setting = ConfigurationManager.AppSettings["loglevel"].ToLower() ?? "error";
+            switch (setting)
+            {
+                case "info":
+                    loglevel = LogLevel.Info;
+                    break;
+                case "warning":
+                    loglevel = LogLevel.Warning;
+                    break;
+            }
+            Logger.SetLevel(loglevel);
+            
+            
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             SimpleIoc.Default.Register<IInfo, InfoService>();
@@ -49,6 +65,8 @@ namespace UI.ViewModel
             SimpleIoc.Default.Register<GroupManagerViewModel>();
             SimpleIoc.Default.Register<SearchViewModel>();
             SimpleIoc.Default.Register<AboutViewModel>();
+            
+            Logger.Log("Bindings completed");
 
         }
 

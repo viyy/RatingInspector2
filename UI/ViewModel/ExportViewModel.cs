@@ -32,6 +32,7 @@ namespace UI.ViewModel
             {
                 if (msg == Ri2Constants.Notifications.GroupsUpdated) RaisePropertyChanged(nameof(Groups));
             });
+            Logger.Log("ExportVM initialized");
         }
 
         public ICommand GroupSelectionChangedCommand { get; }

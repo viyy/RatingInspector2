@@ -55,6 +55,7 @@ namespace UI.ViewModel
             SearchFideCommand = new RelayCommand(() => Fide2Merge = _pm.SearchFideProfile(FideSearch));
             SearchRcfCommand = new RelayCommand(() => Rcf2Merge = _pm.SearchRcfProfile(RcfSearch));
             MergeCommand = new RelayCommand(RunMerge);
+            Logger.Log("SearchVM initialized");
         }
 
         public ICommand RemoveFilterCommand { get; }
@@ -161,22 +162,35 @@ namespace UI.ViewModel
 
         private void CopyToClipboard()
         {
-            //License block++
-            if (License.GetData("copy")!="true") throw new OutOfLicenseLimitException("Search system: You can not copy profile with your current license");
-            //License block--
-            var str = "Имя:".PadRight(10) + SelectedProfile.RcfProfile?.Name + Environment.NewLine;
-            str += "Имя(En):".PadRight(10) + SelectedProfile.FideProfile?.Name + Environment.NewLine;
-            str += "Г.р.:".PadRight(10) + SelectedProfile.Birth + Environment.NewLine;
-            str += "РШФ Id:".PadRight(10) + SelectedProfile.RcfProfile?.RcfId + Environment.NewLine;
-            str += "Fide Id:".PadRight(10) + SelectedProfile.FideProfile?.FideId + Environment.NewLine;
-            str += "РШФ Std:".PadRight(10) + SelectedProfile.RcfProfile?.Std + Environment.NewLine;
-            str += "РШФ Rpd:".PadRight(10) + SelectedProfile.RcfProfile?.Rpd + Environment.NewLine;
-            str += "РШФ Blz:".PadRight(10) + SelectedProfile.RcfProfile?.Blz + Environment.NewLine;
-            str += "FIDE Std:".PadRight(10) + SelectedProfile.FideProfile?.Std + Environment.NewLine;
-            str += "FIDE Rpd:".PadRight(10) + SelectedProfile.FideProfile?.Rpd + Environment.NewLine;
-            str += "FIDE Blz:".PadRight(10) + SelectedProfile.FideProfile?.Blz + Environment.NewLine;
-            Clipboard.SetText(str);
-            IsSnackBarVisible = true;
+            Logger.Log("SearchVM", "Copying profile");
+            try
+            {
+                //License block++
+                if (License.GetData("copy") != "true")
+                {
+                    throw new OutOfLicenseLimitException(
+                        "Search system: You can not copy profile with your current license");
+                }
+
+                //License block--
+                var str = "Имя:".PadRight(10) + SelectedProfile.RcfProfile?.Name + Environment.NewLine;
+                str += "Имя(En):".PadRight(10) + SelectedProfile.FideProfile?.Name + Environment.NewLine;
+                str += "Г.р.:".PadRight(10) + SelectedProfile.Birth + Environment.NewLine;
+                str += "РШФ Id:".PadRight(10) + SelectedProfile.RcfProfile?.RcfId + Environment.NewLine;
+                str += "Fide Id:".PadRight(10) + SelectedProfile.FideProfile?.FideId + Environment.NewLine;
+                str += "РШФ Std:".PadRight(10) + SelectedProfile.RcfProfile?.Std + Environment.NewLine;
+                str += "РШФ Rpd:".PadRight(10) + SelectedProfile.RcfProfile?.Rpd + Environment.NewLine;
+                str += "РШФ Blz:".PadRight(10) + SelectedProfile.RcfProfile?.Blz + Environment.NewLine;
+                str += "FIDE Std:".PadRight(10) + SelectedProfile.FideProfile?.Std + Environment.NewLine;
+                str += "FIDE Rpd:".PadRight(10) + SelectedProfile.FideProfile?.Rpd + Environment.NewLine;
+                str += "FIDE Blz:".PadRight(10) + SelectedProfile.FideProfile?.Blz + Environment.NewLine;
+                Clipboard.SetText(str);
+                IsSnackBarVisible = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("SearchVM", $"Unable to copy: {ex.Message}", LogLevel.Error);
+            }
         }
 
         private void ApplyFilter(string needle)

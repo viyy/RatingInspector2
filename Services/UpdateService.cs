@@ -30,81 +30,97 @@ namespace Services
         private const string RcfProcess = "Обработка файла РШФ...";
         private const string Chk = "Синхронизация профилей...";
 
+        private const string Module = "UpdateService";
+        
         public async Task UpdateAsync(IProgress<string> progress = null)
         {
-            if (File.Exists(FideZipPath)) File.Delete(FideZipPath);
-
-            if (File.Exists(RcfFilePath)) File.Delete(RcfFilePath);
-
-            if (File.Exists(FideFilePath)) File.Delete(FideFilePath);
-            using (var client = new WebClient())
+            try
             {
-                progress?.Report(FideZip);
-                await client.DownloadFileTaskAsync(new Uri(Settings.Current.FideUrl), FideZipPath)
-                    .ConfigureAwait(false);
-                progress?.Report(FideZipComplete);
-                progress?.Report(RcfXsl);
-                await client.DownloadFileTaskAsync(new Uri(Settings.Current.RcfUrl), RcfFilePath)
-                    .ConfigureAwait(false);
-                progress?.Report(RcfXslComplete);
-            }
+                Logger.Log(Module, $"Update started");
+                if (File.Exists(FideZipPath)) File.Delete(FideZipPath);
 
-            progress?.Report(FideUnzip);
-            ZipFile.ExtractToDirectory(FideZipPath, TmpPath);
-            progress?.Report(FideProcess);
-            /*
-            <fideid>419214</fideid>
-            <name></name>
-            <country>ENG</country>
-            <sex>M</sex>
-            <title></title>
-            <w_title></w_title>
-            <o_title></o_title>
-            <foa_title></foa_title>
-            <rating>1736</rating>
-            <games>0</games>
-            <k>20</k>
-            <rapid_rating>1587</rapid_rating>
-            <rapid_games>10</rapid_games>
-            <rapid_k>20</rapid_k>
-            <blitz_rating></blitz_rating>
-            <blitz_games></blitz_games>
-            <blitz_k></blitz_k>
-            <birthday></birthday>
-            <flag></flag>
-             */
+                if (File.Exists(RcfFilePath)) File.Delete(RcfFilePath);
 
-            await Task.Run(() => ProcessFide()).ConfigureAwait(false);
-            progress?.Report(CompleteMsg);
-            progress?.Report(RcfProcess);
-            await Task.Run(() => ProcessRcf()).ConfigureAwait(false);
-            progress?.Report(Chk);
-            CheckProfiles();
-            using (var db = new Ri2Context())
-            {
-                var t = db.Info.FirstOrDefault(x => x.Name == InfoKeys.LastUpdate);
-                if (t == null)
+                if (File.Exists(FideFilePath)) File.Delete(FideFilePath);
+                using (var client = new WebClient())
                 {
-                    t = new InfoValue
+                    progress?.Report(FideZip);
+                    await client.DownloadFileTaskAsync(new Uri(Settings.Current.FideUrl), FideZipPath)
+                        .ConfigureAwait(false);
+                    progress?.Report(FideZipComplete);
+                    progress?.Report(RcfXsl);
+                    await client.DownloadFileTaskAsync(new Uri(Settings.Current.RcfUrl), RcfFilePath)
+                        .ConfigureAwait(false);
+                    progress?.Report(RcfXslComplete);
+                }
+
+                Logger.Log(Module, $"Files downloaded");
+                progress?.Report(FideUnzip);
+                ZipFile.ExtractToDirectory(FideZipPath, TmpPath);
+                progress?.Report(FideProcess);
+                /*
+                <fideid>419214</fideid>
+                <name></name>
+                <country>ENG</country>
+                <sex>M</sex>
+                <title></title>
+                <w_title></w_title>
+                <o_title></o_title>
+                <foa_title></foa_title>
+                <rating>1736</rating>
+                <games>0</games>
+                <k>20</k>
+                <rapid_rating>1587</rapid_rating>
+                <rapid_games>10</rapid_games>
+                <rapid_k>20</rapid_k>
+                <blitz_rating></blitz_rating>
+                <blitz_games></blitz_games>
+                <blitz_k></blitz_k>
+                <birthday></birthday>
+                <flag></flag>
+                 */
+
+                await Task.Run(() => ProcessFide()).ConfigureAwait(false);
+                progress?.Report(CompleteMsg);
+                Logger.Log(Module, $"Fide file processed");
+                progress?.Report(RcfProcess);
+                await Task.Run(() => ProcessRcf()).ConfigureAwait(false);
+                Logger.Log(Module, $"Rcf file processed");
+                progress?.Report(Chk);
+                CheckProfiles();
+                Logger.Log(Module, $"Profiles checked");
+                using (var db = new Ri2Context())
+                {
+                    var t = db.Info.FirstOrDefault(x => x.Name == InfoKeys.LastUpdate);
+                    if (t == null)
                     {
-                        Name = InfoKeys.LastUpdate,
-                        Value = DateTime.Now.ToShortDateString()
-                    };
-                    db.Info.Add(t);
-                }
-                else
-                {
-                    t.Value = DateTime.Now.ToShortDateString();
+                        t = new InfoValue
+                        {
+                            Name = InfoKeys.LastUpdate,
+                            Value = DateTime.Now.ToShortDateString()
+                        };
+                        db.Info.Add(t);
+                    }
+                    else
+                    {
+                        t.Value = DateTime.Now.ToShortDateString();
+                    }
+
+                    await db.SaveChangesAsync().ConfigureAwait(false);
                 }
 
-                await db.SaveChangesAsync().ConfigureAwait(false);
+                progress?.Report(CompleteMsg);
+                Logger.Log(Module, $"Update completed");
             }
-
-            progress?.Report(CompleteMsg);
+            catch (Exception ex)
+            {
+                Logger.Log(Module, $"Error: {ex.Message}");
+            }
         }
 
         public void CleanUp()
         {
+            Logger.Log(Module, $"Temp files cleaning [{Settings.Current.RemoveTmpFiles}]");
             if (!Settings.Current.RemoveTmpFiles) return;
             try
             {
@@ -114,9 +130,7 @@ namespace Services
             }
             catch (Exception e)
             {
-                File.AppendAllText("err.log",
-                    DateTime.Now.ToShortTimeString() + "| UpdateService | CleanUp |" +e.Message +
-                    Environment.NewLine);
+                Logger.Log(Module, new []{"Cleanup failed", e.Message}, LogLevel.Error);
             }
         }
 
@@ -124,7 +138,6 @@ namespace Services
         {
             using (var ri2 = new Ri2Context())
             {
-                
                 foreach (var profile in ri2.Profiles.Include(x=>x.RcfProfile.FideProfile).Include(x=>x.FideProfile))
                 {
                     if (profile.FideProfileId.HasValue && profile.RcfProfileId.HasValue) continue;

@@ -132,6 +132,9 @@
     <Compile Include="Converters\False2Visible.cs" />
     <Compile Include="Converters\False2Collapsed.cs" />
     <Compile Include="Converters\Object2Bool.cs" />
+    <Compile Include="UrlOpenDialog.xaml.cs">
+      <DependentUpon>UrlOpenDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AsyncCommand.cs" />
     <Compile Include="Utils\IAsyncCommand.cs" />
     <Compile Include="Utils\IErrorHandler.cs" />
@@ -159,6 +162,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UrlOpenDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

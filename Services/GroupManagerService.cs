@@ -17,6 +17,7 @@ namespace Services
     {
         public List<Group> GetGroups(bool fullData = false)
         {
+            Logger.Log("GroupManagerService", "Retrieving Groups");
             using (var db = new Ri2Context())
             {
                 return fullData
@@ -28,6 +29,7 @@ namespace Services
 
         public void UpdateGroup(Group gr)
         {
+            Logger.Log("GroupManagerService", $"Updating group [{gr.Id}]{gr.Name}");
             using (var db = new Ri2Context())
             {
                 var tmp = db.Groups.FirstOrDefault(x => x.Id == gr.Id);
@@ -39,6 +41,7 @@ namespace Services
 
         public async Task MergeGroups(Group from, Group to)
         {
+            Logger.Log("GroupManagerService", $"Merging groups [{from.Id}]{from.Name} and [{to.Id}]{to.Name}");
             using (var db = new Ri2Context())
             {
                 var origin = db.Groups.FirstOrDefault(x => x.Id == from.Id);
@@ -55,10 +58,15 @@ namespace Services
 
         public void DeleteGroup(Group gr)
         {
+            Logger.Log("GroupManagerService", $"Deleting group [{gr.Id}]{gr.Name}");
             using (var db = new Ri2Context())
             {
                 var tmp = db.Groups.Include(x => x.Profiles).FirstOrDefault(x => x.Id == gr.Id);
-                if (tmp == null || tmp.Profiles.Count != 0) return;
+                if (tmp == null || tmp.Profiles.Count != 0)
+                {
+                    Logger.Log("GroupManagerService", $"Group [{gr.Id}]{gr.Name} not empty. Can not delete.", LogLevel.Warning);
+                    return;
+                }
                 db.Groups.Remove(tmp);
                 db.SaveChanges();
             }
@@ -66,22 +74,38 @@ namespace Services
 
         public void CreateGroup(Group gr)
         {
-            // License block++
-            var limit = License.GetData("groups");
-            if (!int.TryParse(limit, out var limitResult)) throw new InvalidLicenseException("Group Manager: Invalid License Data");
-            // License block--
-            using (var db = new Ri2Context())
+            try
             {
-                if (limitResult!=-1 && db.Groups.Count()>=limitResult) throw new OutOfLicenseLimitException("Group Limit Reached");
-                gr.Id = 0;
-                db.Groups.Attach(gr);
-                db.Entry(gr).State = EntityState.Added;
-                db.SaveChanges();
+                // License block++
+                var limit = License.GetData("groups");
+                if (!int.TryParse(limit, out var limitResult))
+                {
+                    throw new InvalidLicenseException("Group Manager: Invalid License Data");
+                }
+
+                // License block--
+                using (var db = new Ri2Context())
+                {
+                    if (limitResult != -1 && db.Groups.Count() >= limitResult)
+                    {
+                        throw new OutOfLicenseLimitException("Group Limit Reached");
+                    }
+
+                    gr.Id = 0;
+                    db.Groups.Attach(gr);
+                    db.Entry(gr).State = EntityState.Added;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("GroupManagerService", $"Error: {ex.Message}", LogLevel.Error);
             }
         }
 
         public void DeleteGroupWithProfiles(int id)
         {
+            Logger.Log("GroupManagerService", $"Deleting group [{id}] --forced");
             using (var db = new Ri2Context())
             {
                 var gr = db.Groups.Include(x => x.Profiles).FirstOrDefault(x => x.Id == id);

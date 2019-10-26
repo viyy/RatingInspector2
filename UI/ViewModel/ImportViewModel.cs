@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -30,8 +31,18 @@ namespace UI.ViewModel
             ClearCommand = new RelayCommand(() => Ids.Clear(), () => Ids.Count > 0);
             ImportCommand = new AsyncCommand(async () =>
             {
-                await Task.Run(() =>
-                    _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide));
+                Logger.Log("ImportVM", "Importing profiles");
+                try
+                {
+                    await Task.Run(() =>
+                            _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide))
+                        .ConfigureAwait(false);
+                }
+                catch(Exception ex)
+                {
+                    Logger.Log("ImportVM", $"Exception: {ex.Message}", LogLevel.Error);
+                }
+
                 //await _import.ImportAsync(Ids.ToList(), SelectedGroup, Rcf ? ProfileType.Rcf : ProfileType.Fide)
                 //.ConfigureAwait(false);
                 MessengerInstance.Send(Ri2Constants.Notifications.DbUpdated);
@@ -44,12 +55,14 @@ namespace UI.ViewModel
                 CurrentId = 0;
             });
             SelectFileCommand = new RelayCommand(SelectFile);
+            SelectUrlCommand = new RelayCommand(SelectUrl);
             DeleteIdCommand = new RelayCommand<int>(i => Ids.Remove(i), Ids.Count > 0);
             MessengerInstance.Register<string>(this, msg =>
             {
                 if (msg == Ri2Constants.Notifications.GroupsUpdated)
                     RaisePropertyChanged(nameof(Groups));
             });
+            Logger.Log("ImportVM initialized");
         }
 
         public ObservableCollection<Group> Groups => new ObservableCollection<Group>(_import.GetGroups());
@@ -77,6 +90,7 @@ namespace UI.ViewModel
         public ICommand AddIdCommand { get; }
         public ICommand SelectFileCommand { get; }
         public ICommand DeleteIdCommand { get; }
+        public ICommand SelectUrlCommand { get; }
 
         public bool Rcf
         {
@@ -102,6 +116,16 @@ namespace UI.ViewModel
             if (path == "") return;
 
             foreach (var i in _import.LoadFromFile(path)) Ids.Add(i);
+        }
+
+        private void SelectUrl()
+        {
+            var dlg = new UrlOpenDialog("Импорт", "Введите URL турнира", "ratings.ruchess.ru/tournaments/******");
+            if (dlg.ShowDialog()!=true) return;
+            var tmp = dlg.Answer;
+            //var res = await _import.LoadFromUrlTask(tmp).ConfigureAwait(false);
+            var res = _import.LoadFromUrl(tmp);
+            foreach (var i in res) Ids.Add(i);
         }
     }
 }
